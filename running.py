@@ -1,4 +1,5 @@
 import psutil
+from win32 import win32gui
+import time
 
-for process in psutil.process_iter(["name", "username"]):
-    print (process.info)
+print (win32gui.GetForegroundWindow())
