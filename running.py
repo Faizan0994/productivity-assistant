@@ -1,9 +1,8 @@
 from psutil         import Process
-
 from win32gui       import GetForegroundWindow
 from win32process   import GetWindowThreadProcessId
 from time           import sleep
-
+from datetime       import datetime
 
 class program:
     def __init__ (self, application):
@@ -12,9 +11,12 @@ class program:
         self.startTime = processDict["create_time"]
         self.pid = processDict["pid"]
 
+    def started (self):
+        return datetime.fromtimestamp (self.startTime).strftime("%d/%m/%y: %I:%M:%S %p")
+
 def foregroundProcess ():
     return Process (GetWindowThreadProcessId (GetForegroundWindow ()) [1])
 
 app = program (foregroundProcess ())
 
-print (app.pid)
+print (app.started ())
