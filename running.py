@@ -1,5 +1,8 @@
-import psutil
-from win32 import win32gui
-import time
+from psutil         import Process
+from win32gui       import GetForegroundWindow
+from win32process   import GetWindowThreadProcessId
 
-print (win32gui.GetForegroundWindow())
+def process ():
+    return Process(GetWindowThreadProcessId(GetForegroundWindow())[1])
+
+print (process ())
