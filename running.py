@@ -19,11 +19,11 @@ class program:
         return datetime.fromtimestamp (self.startTime).strftime("%d/%m/%y: %I:%M:%S %p")
 
     def isRunning (self):
-        return __app.is_running ()
+        return self.__app.is_running ()
 
 def foregroundProcess ():
     return Process (GetWindowThreadProcessId (GetForegroundWindow ()) [1])
 
 app = program (foregroundProcess ())
 
-print (app.isRunning())
+print (app.isRunning ())
