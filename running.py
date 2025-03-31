@@ -8,12 +8,12 @@ class program:
     __app = None
 
     def __init__ (self, application):
-        processDict = application.as_dict()
-        
         self.__app = application
-        self.name = processDict["name"]
-        self.startTime = processDict["create_time"]
-        self.pid = processDict["pid"]
+        
+        with application.oneshot ():
+            self.name = application.name ()
+            self.startTime = application.create_time ()
+            self.pid = application.pid ()
 
     def started (self):
         return datetime.fromtimestamp (self.startTime).strftime("%d/%m/%y: %I:%M:%S %p")
@@ -26,4 +26,4 @@ def foregroundProcess ():
 
 app = program (foregroundProcess ())
 
-print (app.isRunning ())
+print (app.name)
