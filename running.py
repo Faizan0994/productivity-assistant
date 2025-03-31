@@ -13,17 +13,26 @@ class program:
         with application.oneshot ():
             self.name = application.name ()
             self.startTime = application.create_time ()
-            self.pid = application.pid ()
+            self.pid = application.pid
 
-    def started (self):
-        return datetime.fromtimestamp (self.startTime).strftime("%d/%m/%y: %I:%M:%S %p")
+    def start_time (self):
+        return datetime.fromtimestamp (self.startTime).strftime ("%d/%m/%y: %I:%M:%S %p")
 
-    def isRunning (self):
+    def running (self):
         return self.__app.is_running ()
 
-def foregroundProcess ():
+def current_process ():
     return Process (GetWindowThreadProcessId (GetForegroundWindow ()) [1])
 
-app = program (foregroundProcess ())
+def is_current_process (proc):
+    currentProcess = current_process ()
 
-print (app.name)
+    with proc.oneshot ():
+        pid = process.pid
+    with currentProcess ():
+        currentPid = currentProcess.pid
+
+    if pid == currentPid:
+        return True
+    else
+        return False
