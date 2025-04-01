@@ -3,8 +3,7 @@ import process
 
 current = []
 while True:
-    # worth soting? maybe remove in future...
-    current.sort (key = lambda application: application.name)
+    current.sort (key = lambda application: application.name)   # worth soting? maybe remove in future...
     app = process.program (process.foreground_process ())
     
     # checking if the function exists...
