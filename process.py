@@ -79,33 +79,7 @@ def foreground_process ():
 # Was thinking of implementing binary search... 
 
 def in_current (app, orderedAppList):
-    length = len (orderedAppList)
-    
-    if length == 0:
-        return False
-    elif length == 1:
-            if orderedAppList[0] == app:
-                return True
-            else:
-                return False
+    if app in ordderedAppList:
+        return True
     else:
-        if length % 2 == 0:
-            index = int(length / 2)
-            
-            if orderedAppList[index] == app or orderedAppList[index - 1] == app:
-                return True
-            else:
-                if orderedAppList[index] < app:
-                    in_current (app, orderedAppList[index + 1: length - 1])
-                else:
-                    in_current (app, orderedAppList[0: index - 2])
-        else:
-            index = int(length // 2)
-            
-            if orderedAppList[index] == app:
-                return True
-            else:
-                if orderedAppList[index] < app:
-                    in_current (app, orderedAppList[index + 1: length - 1])
-                else:
-                    in_current (app, orderedAppList[0:index - 1])
+        return False
