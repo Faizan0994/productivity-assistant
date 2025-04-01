@@ -76,10 +76,11 @@ def foreground_process ():
     except ValueError:
         return None
 
-# Was thinking of implementing binary search... 
+# I   tried to  create  binary  search...  But failed  so  thank  God   I
+# implemented a simple function
 
 def in_current (app, orderedAppList):
-    if app in ordderedAppList:
+    if app in orderedAppList:
         return True
     else:
         return False
