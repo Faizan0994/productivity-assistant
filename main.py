@@ -3,13 +3,13 @@ import process
 
 current = []
 while True:
+    # worth soting? maybe remove in future...
     current.sort (key = lambda application: application.name)
     app = process.program (process.foreground_process ())
     
     # checking if the function exists...
     if app.name != None:
-        isCurrent = process.in_current (app, current)
-        if isCurrent:
+        if process.in_current (app, current):
             # do something...
             pass
         else:
