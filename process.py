@@ -3,7 +3,6 @@ from win32gui       import GetForegroundWindow
 from win32process   import GetWindowThreadProcessId
 from datetime       import datetime
 
-
 # During  intialization,  it is possible that None is passed due  to  some 
 # error. Hence, the type is compared to determine if its an Process object 
 # or NoneType. For encountering an error the name is set to none.
@@ -18,7 +17,7 @@ class program:
             with application.oneshot ():    
                 # oneshot is for optimization
                 self.name = application.name ()
-                self.startTime = application.create_time ()
+                self.startTime = datetime.fromtimestamp (application.create_time ())
                 self.pid = application.pid
          
         elif isinstance (application, type (None)):
@@ -42,9 +41,9 @@ class program:
         else:
             return False
 
-    def start_time (self):  
+    def print_time (self):  
         # returns dattime object as readable string
-        return datetime.fromtimestamp (self.startTime).strftime ("%d/%m/%y: %I:%M:%S %p")
+        print (self.startTime.strftime ("%d/%m/%y: %I:%M:%S %p %z"))
 
     def running (self):     
         # do nott use pid_exists
