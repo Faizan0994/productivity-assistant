@@ -1,9 +1,16 @@
 from time import sleep
+
 import process
 
+# main loop flag
+asstiantRunning = True
+
 current = []
+
 while True:
-    current.sort (key = lambda application: application.name)   # worth soting? maybe remove in future...
+    # if not needed remove it
+    current.sort (key = lambda application: application.name)
+    
     app = process.program (process.foreground_process ())
     
     # checking if the function exists...
@@ -12,8 +19,8 @@ while True:
             # do something...
             pass
         else:
-            # do something... 
             current.append (app)
+            # do something... 
         
     for x in current:
         print (x.name, end = " ")
