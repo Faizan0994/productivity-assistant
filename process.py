@@ -15,7 +15,8 @@ class program:
         if isinstance (application, Process):
             self.__app = application
         
-            with application.oneshot (): # oneshot is for speed-up
+            with application.oneshot ():    
+                # oneshot is for optimization
                 self.name = application.name ()
                 self.startTime = application.create_time ()
                 self.pid = application.pid
@@ -41,17 +42,24 @@ class program:
         else:
             return False
 
-    def start_time (self):
+    def start_time (self):  
+        # returns dattime object as readable string
         return datetime.fromtimestamp (self.startTime).strftime ("%d/%m/%y: %I:%M:%S %p")
 
-    def running (self):
+    def running (self):     
+        # do nott use pid_exists
         return self.__app.is_running ()
 
 
 def foreground_process ():
-    """Returns  the  pid of the  window  present  in  the foreground.
-    The GetForegroundWindow returns the hwndle (handle to  the  window).
-    As  we need the PID, we pass it  to  GetWindowThreadProcessID which gives both the process and  thread id as a Tuple."""
+    """
+    Returns  the  pid of the  window  present  in  the foreground.
+    The  GetForegroundWindow  returns  the hwndle (handle  to  the  
+    window).   As   we    need   the    PID,   we   pass   it   to  
+    GetWindowThreadProcessID   which   gives   both   the  process 
+    and thread id as a tuple.
+    """
+    # remove except and merge them togather later 
     try:
         return Process (GetWindowThreadProcessId (GetForegroundWindow ()) [1])
     except NoSuchProcess:
@@ -61,7 +69,8 @@ def foreground_process ():
     except ValueError:
         return None
 
-def in_current (app, orderedAppList): # To check if the app is currently running
+def in_current (app, orderedAppList): 
+    # To check if the app is currently running
     if app in orderedAppList:
         return True
     else:
