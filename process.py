@@ -29,18 +29,6 @@ class program:
         else:
             return False
     
-    def __gt__ (self, other):
-        if self.name > other.name:
-            return True
-        else:
-            return False
-
-    def __lt__ (self, other):
-        if self.name < other.name:
-            return True
-        else:
-            return False
-
     def print_time (self):  
         # returns dattime object as readable string
         print (self.startTime.strftime ("%d/%m/%y: %I:%M:%S %p %z"))
