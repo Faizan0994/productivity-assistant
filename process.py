@@ -2,6 +2,7 @@ from psutil         import Process, NoSuchProcess, AccessDenied
 from win32gui       import GetForegroundWindow
 from win32process   import GetWindowThreadProcessId
 from datetime       import datetime
+from calc_time      import add_local_tz
 
 # During  intialization,  it is possible that None is passed due  to  some 
 # error. Hence, the type is compared to determine if its an Process object 
@@ -17,9 +18,9 @@ class program:
             with application.oneshot ():    
                 # oneshot is for optimization
                 self.name = application.name ()
-                self.startTime = datetime.fromtimestamp (application.create_time ())
                 self.pid = application.pid
-         
+                self.startTime = add_local_tz (datetime.fromtimestamp (application.create_time ()))
+
         elif isinstance (application, type (None)):
             self.name = None
 
@@ -29,12 +30,12 @@ class program:
         else:
             return False
     
-    def print_time (self):  
+    def start_time (self):  
         # returns dattime object as readable string
-        print (self.startTime.strftime ("%d/%m/%y: %I:%M:%S %p %z"))
+        return self.startTime.strftime ("%d/%m/%y: %I:%M:%S %p %z")
 
     def running (self):     
-        # do nott use pid_exists
+        # do not use pid_exists
         return self.__app.is_running ()
 
 
