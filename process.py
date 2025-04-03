@@ -19,6 +19,7 @@ class program:
                 # oneshot is for optimization
                 self.name = application.name ()
                 self.pid = application.pid
+                # fromtimesame converts creat_time into datetime object
                 self.startTime = add_local_tz (datetime.fromtimestamp (application.create_time ()))
 
         elif isinstance (application, type (None)):
