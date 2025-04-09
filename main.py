@@ -1,5 +1,6 @@
 from time       import sleep
-import process
+
+import backend_modules.process as process
 
 # important control flags
 asstiantRunning = True
@@ -13,22 +14,21 @@ def assistant (currentAppList):
         
         app = process.program (process.foreground_process ())
 
-        # checking if the function exists
+        # checking if the process exists
         if app.name != None:
-            if process.in_current (app, current):
-                # do something...
-                pass
-            else:
+            if not process.in_current (app, current):
                 currentAppList.append (app)
                 # do something... 
 	  	    
         for application in currentAppList:
             # print (application.name, end = " ")
-            return    application.start_time ()
+            return application.startTime 
         print()
 	  	
         sleep (1)
 
 
 # main function execution 
-print (assistant (current))
+from backend_modules.calc_time import to_utc
+time = to_utc (assistant (current))
+print (time)
