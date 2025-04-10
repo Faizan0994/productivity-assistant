@@ -58,7 +58,7 @@ def foreground_process ():
     except ValueError:
         return None
 
-def in_current (app, orderedAppList): 
+def in_current (app: program, orderedAppList: list): 
     # To check if the app is currently running
     if app in orderedAppList:
         return True

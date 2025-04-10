@@ -7,7 +7,7 @@ asstiantRunning = True
 
 current = []
 
-def assistant (currentAppList):
+def assistant (currentAppList) -> process.program:
     while True:
         # if not needed remove it
         currentAppList.sort (key = lambda application: application.name)
@@ -22,13 +22,16 @@ def assistant (currentAppList):
 	  	    
         for application in currentAppList:
             # print (application.name, end = " ")
-            return application.startTime 
+            return application
         print()
 	  	
         sleep (1)
 
 
 # main function execution 
-from backend_modules.calc_time import to_utc
-time = to_utc (assistant (current))
-print (time)
+from backend_modules import database
+import sqlite3
+
+x = assistant (current)
+print (x.name)
+database.addProgram (database.database, x)
