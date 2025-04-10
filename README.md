@@ -15,3 +15,4 @@ A productivity app that tracks app usage and allows you to set limits
 ## Psotponed
 - session blocking
 - visit blocking
+- Welcome screen on first launch
