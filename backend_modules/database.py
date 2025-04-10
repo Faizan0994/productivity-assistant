@@ -9,8 +9,6 @@ def setDatabase (path, name):
     database = sqlite3.connect (join (path, name))
     dbcur = database.cursor ()
     dbcur.execute ("CREATE TABLE programs (ID int, name VARCHAR (255), PRIMARY KEY (ID))")
-    tables = dbcur.execute ("SELECT name FROM sqlite_master")
-    print (dbcur.fetchall ())
 
 # global variables
 userName = GetUserName()
