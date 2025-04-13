@@ -20,7 +20,8 @@ class MainWindow(QMainWindow):
         windowHeight = 768
         centeringVertex = ((screen.width() - windowWidth) // 2, (screen.height() - windowHeight) // 2)
         self.setWindowTitle("Productivity Assistant")
-        self.setGeometry(centeringVertex[0], centeringVertex[1], windowWidth, windowHeight) # window's size and placement
+        self.setFixedSize(windowWidth, windowHeight)
+        self.move(centeringVertex[0], centeringVertex[1]) # the center of screen
         self.initUI()
 
 
