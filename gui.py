@@ -16,7 +16,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         screen = QGuiApplication.primaryScreen().availableGeometry()
-        windowWidth = 1280
+        windowWidth = 1200
         windowHeight = 768
         centeringVertex = ((screen.width() - windowWidth) // 2, (screen.height() - windowHeight) // 2)
         self.setWindowTitle("Productivity Assistant")
