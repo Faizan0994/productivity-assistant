@@ -12,7 +12,7 @@ A productivity app that tracks app usage and allows you to set limits
 - Reminding of the usage time
 - Stopping the app
 
-## Psotponed
+## Postponed
 - session blocking
 - visit blocking
 - Welcome screen on first launch
