@@ -1,7 +1,8 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QLabel, QPushButton, QSizePolicy
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QLabel, QPushButton, QSizePolicy, QScrollArea
 from PyQt5.QtGui import QGuiApplication, QFontDatabase, QFont
 from PyQt5.QtCore import Qt
+from gui_library import SmartScrollArea
 
 class MainWindow(QMainWindow):
     # This will be changed later
@@ -12,6 +13,7 @@ class MainWindow(QMainWindow):
     mutedColor = "#878E97"
     cardOutlineColor = "#8199B7"
     cardBgColor = "#E2E8F0"
+    scrollBarColor = "#94A3B8"
 
     def __init__(self):
         super().__init__()
@@ -41,6 +43,11 @@ class MainWindow(QMainWindow):
         self.limitsTabButton = QPushButton("App Limits", self.tabs)
         self.settingsButton = QPushButton("Settings", self.tabs)
         self.contentArea = QWidget(centralWidget)
+        self.contentArea.setMinimumHeight(1200)
+        self.scroller = SmartScrollArea()
+        self.scroller.setWidget(self.contentArea)
+        self.scroller.setFrameShape(QScrollArea.NoFrame)
+
         self.title.setStyleSheet(f"""background-color: transparent;
                                      color: {self.textColor};
                                      border: none;
@@ -66,6 +73,27 @@ class MainWindow(QMainWindow):
                 border-color: {self.primaryColor};
             }}
         """)
+        self.scroller.setStyleSheet(f"""
+            QScrollBar:vertical {{
+                background: {self.cardBgColor};
+                width: 6px;
+                margin: 0px;
+                border-radius: 3px;
+            }}
+            QScrollBar::handle:vertical {{
+                background: {self.scrollBarColor};
+                min-height: 30px;
+                border-radius: 3px;
+            }}
+            QScrollBar::add-line:vertical,
+            QScrollBar::sub-line:vertical {{
+                height: 0px;
+            }}
+            QScrollBar::add-page:vertical,
+            QScrollBar::sub-page:vertical {{
+                background: none;
+            }}
+        """)
         self.dashboardButton.setStyleSheet(f"""
                                             color: {self.primaryColor};
                                             border-color: {self.primaryColor};
@@ -73,7 +101,7 @@ class MainWindow(QMainWindow):
 
         mainLayout = QVBoxLayout()
         mainLayout.addWidget(self.header, 1)
-        mainLayout.addWidget(self.contentArea, 7)
+        mainLayout.addWidget(self.scroller, 7)
         mainLayout.setSpacing(0)
         mainLayout.setContentsMargins(64,0,64,0) # Padding to the right and left
 
