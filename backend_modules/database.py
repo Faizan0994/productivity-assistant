@@ -27,7 +27,7 @@ if freshDownload:
 # remove it after making database ...
 else:
       rmtree (databasePath)
-      exit ("Removed File")
+      exit ("Removed file")
 
 del (freshDownload)
 
@@ -40,7 +40,7 @@ def addProgram (database: sqlite3.Connection, programObj: program):
     cursordb.execute ("INSERT INTO programs VALUES (NULL, ?)", [programObj.name])   # inorder to auto increment use null
     database.commit ()
     # to check ...
-    print (cursordb.execute ("SELECT * FROM programs").fetchall ())
+    # print (cursordb.execute ("SELECT * FROM programs").fetchall ())
 
 # for emergency situations ...
 # databasePath = join (expanduser ("~"), PureWindowsPath ("Documents", "productivity-assistant", "database"))

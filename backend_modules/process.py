@@ -25,7 +25,7 @@ class program:
         elif isinstance (application, type (None)):
             self.name = None
 
-    def __eq__ (self, other):
+    def __eq__ (self, other) -> bool:
         if self.name == other.name:
             return True
         else:
@@ -58,7 +58,7 @@ def foreground_process ():
     except ValueError:
         return None
 
-def in_current (app: program, orderedAppList: list): 
+def in_current (app: program, orderedAppList: list) -> bool: 
     # To check if the app is currently running
     if app in orderedAppList:
         return True

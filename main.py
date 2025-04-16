@@ -29,9 +29,9 @@ def assistant (currentAppList) -> process.program:
 
 
 # main function execution 
-from backend_modules import database
+from backend_modules import addProgram, database
 import sqlite3
 
 x = assistant (current)
 print (x.name)
-database.addProgram (database.database, x)
+addProgram (database, x)
