@@ -4,8 +4,6 @@ from win32api   import GetUserName
 from pathlib    import PureWindowsPath
 from os         import mkdir
 from os.path    import expanduser, join, isdir
-from importlib  import import_module
-
 
 # remove after completing ...
 from shutil     import rmtree
