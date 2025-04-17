@@ -24,6 +24,7 @@ if freshDownload:
         mkdir (databasePath)
         setDatabase (databasePath, databaseName)
         # run the introductory program ...
+
 # remove it after making database ...
 else:
       rmtree (databasePath)
