@@ -48,9 +48,9 @@ class MainWindow(QMainWindow):
         self.limitsTabButton = QPushButton("App Limits", self.tabs)
         self.settingsButton = QPushButton("Settings", self.tabs)
         self.contentArea = QWidget(centralWidget)
-        self.contentArea.setMinimumHeight(int(self.windowHeight * 1.5))
+        self.contentArea.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
+        self.contentArea.adjustSize()
         self.scroller = SmartScrollArea()
-        self.scroller.setWidget(self.contentArea)
         self.scroller.setFrameShape(QScrollArea.NoFrame)
 
         self.title.setStyleSheet(f"""background-color: transparent;
