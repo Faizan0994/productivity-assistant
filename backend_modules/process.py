@@ -15,12 +15,9 @@ class program:
         if isinstance (application, Process):
             self.__app = application
         
+            # oneshot is for optimization
             with application.oneshot ():    
-                # oneshot is for optimization
-                self.name = application.name ()
-                self.pid = application.pid
-                # fromtimesame converts creat_time into datetime object
-                self.startTime = add_local_tz (datetime.fromtimestamp (application.create_time ()))
+                self.name = application.name ().strip (".exe")
 
         elif isinstance (application, type (None)):
             self.name = None
@@ -31,9 +28,9 @@ class program:
         else:
             return False
     
-    def start_time (self) -> str:
+    # def time (self) -> str:
         # returns dattime object as readable string
-        return self.startTime.strftime ("%d/%m/%y: %I:%M:%S %p %z")
+        # return self.startTime.strftime ("%d/%m/%y: %I:%M:%S %p %z")
 
     def running (self) -> bool:
         # do not use pid_exists

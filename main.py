@@ -18,23 +18,17 @@ def assistant (currentAppList) -> process.program:
         if app.name != None:
             if not process.in_current (app, current):
                 currentAppList.append (app)
-                if not app.name in database.programList ():
-                    database.addProgram (app)	  	    
+                if not database.in_program_list (app.name):
+                    database.add_program(app)
+                    
+                # if not app.name in database.programList ():
+                #     database.addProgram (app)	  	    
 
-        for application in currentAppList:
-            # print (application.name, end = " ")
-            return application
+        return None
+        
         print()
-	  	
         sleep (1)
 
 
 # main function execution 
-from backend_modules import addProgram, database
-import sqlite3
-
-x = assistant (current)
-print (x.name)
-addProgram (x)
-programs = database.programList ()
-print (programs)
+assistant (current)
