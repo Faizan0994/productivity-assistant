@@ -52,8 +52,6 @@ del (freshDownload)
 database = sqlite3.connect (join (databasePath, databaseName))
 cursordb = database.cursor ()
 
-process = import_module ("backend_modules.process")
-
 def add_program (name: str):
     # inorder to auto increment use null
     cursordb.execute    ("""
