@@ -1,4 +1,6 @@
-import backend_modules.process as process
+import backend_modules.process  as process
+import backend_modules.database as database
+
 from time       import sleep
 
 # important control flags
@@ -16,9 +18,8 @@ def assistant (currentAppList) -> process.program:
         if app.name != None:
             if not process.in_current (app, current):
                 currentAppList.append (app)
-                # do something...
-	  	    
-            # if app is not in the database
+                if not app.name in database.programList ():
+                    database.addProgram (app)	  	    
 
         for application in currentAppList:
             # print (application.name, end = " ")
@@ -35,3 +36,5 @@ import sqlite3
 x = assistant (current)
 print (x.name)
 addProgram (x)
+programs = database.programList ()
+print (programs)

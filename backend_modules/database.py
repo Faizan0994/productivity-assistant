@@ -1,3 +1,5 @@
+__all__ = ["addProgram", "programList"]
+
 import sqlite3
 
 from win32api   import GetUserName
@@ -33,15 +35,22 @@ else:
 del (freshDownload)
 
 database = sqlite3.connect (join (databasePath, databaseName))
+cursordb = database.cursor ()
+
 # tablesdb = cursordb.execute ("SELECT name FROM sqlite_master")
 # programsdb = cursordb.execute ("SELECT name FROM sqlite_master WHERE name = 'progams'")
 
 def addProgram (programObj: program):
-    cursordb = database.cursor ()
     cursordb.execute ("INSERT INTO programs VALUES (NULL, ?)", [programObj.name])   # inorder to auto increment use null
     database.commit ()
     # to check ...
     # print (cursordb.execute ("SELECT * FROM programs").fetchall ())
+
+def programList ():
+    programs = []
+    for name in cursordb.execute ("SELECT name FROM programs"):
+        programs.append (name)
+    return programs
 
 # for emergency situations ...
 # databasePath = join (expanduser ("~"), PureWindowsPath ("Documents", "productivity-assistant", "database"))

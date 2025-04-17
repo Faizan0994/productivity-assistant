@@ -31,11 +31,11 @@ class program:
         else:
             return False
     
-    def start_time (self):  
+    def start_time (self) -> str:
         # returns dattime object as readable string
         return self.startTime.strftime ("%d/%m/%y: %I:%M:%S %p %z")
 
-    def running (self):     
+    def running (self) -> bool:
         # do not use pid_exists
         return self.__app.is_running ()
 
