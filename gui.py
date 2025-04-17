@@ -18,11 +18,16 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         screen = QGuiApplication.primaryScreen().availableGeometry()
-        windowWidth = 1200
-        windowHeight = 768
-        centeringVertex = ((screen.width() - windowWidth) // 2, (screen.height() - windowHeight) // 2)
+        self.windowWidth = int(screen.width() * 0.7)  # 70% of screen width
+        self.windowHeight = int(self.windowWidth * 0.64)   # To keep the width to height ratio same for all screens
+        
+        # To replicate CSS vw and vh units
+        self.vw = self.windowWidth // 100
+        self.vh = self.windowHeight // 100
+
+        centeringVertex = ((screen.width() - self.windowWidth) // 2, (screen.height() - self.windowHeight) // 2)
         self.setWindowTitle("Productivity Assistant")
-        self.setFixedSize(windowWidth, windowHeight)
+        self.setFixedSize(self.windowWidth, self.windowHeight)
         self.move(centeringVertex[0], centeringVertex[1]) # the center of screen
         self.initUI()
 
@@ -43,7 +48,7 @@ class MainWindow(QMainWindow):
         self.limitsTabButton = QPushButton("App Limits", self.tabs)
         self.settingsButton = QPushButton("Settings", self.tabs)
         self.contentArea = QWidget(centralWidget)
-        self.contentArea.setMinimumHeight(1200)
+        self.contentArea.setMinimumHeight(int(self.windowHeight * 1.5))
         self.scroller = SmartScrollArea()
         self.scroller.setWidget(self.contentArea)
         self.scroller.setFrameShape(QScrollArea.NoFrame)
@@ -51,18 +56,18 @@ class MainWindow(QMainWindow):
         self.title.setStyleSheet(f"""background-color: transparent;
                                      color: {self.textColor};
                                      border: none;
-                                     font-size: 36px;
+                                     font-size: {int(3.4*self.vw)}px;
                                      font-weight: 500;
                                      """)
 
         self.tabs.setStyleSheet(f"""
             QPushButton {{
                 background-color: transparent;
-                margin-top: 16px;
+                margin-top: {int(1.2*self.vw)}px;
                 border: none;
                 outline: none;
                 color: {self.textColor};
-                font-size: 16px;
+                font-size: {int(1.4*self.vw)}px;
                 border-bottom: 1px solid {self.accentColor};
                 padding: 0px;
                 width: auto;
@@ -76,14 +81,14 @@ class MainWindow(QMainWindow):
         self.scroller.setStyleSheet(f"""
             QScrollBar:vertical {{
                 background: {self.cardBgColor};
-                width: 6px;
+                width: {int(0.5*self.vw)}px;
                 margin: 0px;
-                border-radius: 3px;
+                border-radius: {int(0.3*self.vw)}px;
             }}
             QScrollBar::handle:vertical {{
                 background: {self.scrollBarColor};
-                min-height: 30px;
-                border-radius: 3px;
+                min-height: {int(2.4*self.vw)}px;
+                border-radius: {int(0.3*self.vw)};
             }}
             QScrollBar::add-line:vertical,
             QScrollBar::sub-line:vertical {{
@@ -103,7 +108,7 @@ class MainWindow(QMainWindow):
         mainLayout.addWidget(self.header, 1)
         mainLayout.addWidget(self.scroller, 7)
         mainLayout.setSpacing(0)
-        mainLayout.setContentsMargins(64,0,64,0) # Padding to the right and left
+        mainLayout.setContentsMargins(5*self.vw,0,5*self.vw,0) # Padding to the right and left
 
         headerLayout = QHBoxLayout()
         headerLayout.addWidget(self.title, 2)
