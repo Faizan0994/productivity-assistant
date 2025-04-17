@@ -10,6 +10,7 @@ from importlib  import import_module
 # remove after completing ...
 from shutil     import rmtree
 
+# sets indexes and creates tables in the database
 def set_database (path, name):
     database = sqlite3.connect (join (path, name))
     dbcur = database.cursor ()
@@ -56,27 +57,43 @@ cursordb = database.cursor ()
 process = import_module ("backend_modules.process")
 
 def add_program (name: str):
-     # inorder to auto increment use null
+    # inorder to auto increment use null
     cursordb.execute    ("""
                          INSERT INTO programs VALUES (NULL, ?)
                          """, [name])
     database.commit ()
 
-def pid (name: str):
-     """
-     returns the process id in *our* database
-     """
+# returns the process id in *our* database
+def pid (name: str) -> int:
      return [entery[0] for entery in cursordb.execute   ("""
                                                          SELECT id FROM programs WHERE name = ?
                                                          """, [name])] [0]
+
+def add_current (pid: int, sartTime: str) -> int:
+    cursordb.execute    ("""
+                        INSERT INTO time_stamps (program_id, start)
+                         VALUES (?, ?)
+                        """, [pid, sartTime])
+    database.commit ()
+    entry_id = [entery[0] for entery in cursordb.execute    ("""
+                                                            SELECT * FROM time_stamps 
+                                                            ORDER BY id DESC
+                                                            """)] [0]
+    return entry_id
+
+def update_endTime_in_current (index: int, endTime: str) -> int:
+     cursordb.execute   ("""
+                         UPDATE time_stamps SET end = ? WHERE id = ?
+                         """, [endTime, index])
+     for i in cursordb.execute ("SELECT * FROM time_stamps WHERE id = ?", [index]):
+          print (i)
 
 def in_program_list (name: str) -> bool:
     """
     Checks for the number of times the name appears 
     in  the programs and  return false if count  is
     zero
-    """
-    
+    """    
     if [count[0] for count in cursordb.execute ("""
                                                 SELECT COUNT (*) FROM 
                                                 (SELECT name FROM programs WHERE name = ?)

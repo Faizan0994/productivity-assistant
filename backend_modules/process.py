@@ -25,8 +25,7 @@ class program:
             if not in_program_list (self.name):
                 add_program (self.name)
             
-            self.pid = pid (self.name)
-            
+            self.pid = pid (self.name)           
 
         elif isinstance (application, type (None)):
             self.name = None
