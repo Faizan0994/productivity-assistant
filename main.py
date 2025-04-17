@@ -13,17 +13,13 @@ def assistant (prevApp: process.program):
         currApp = process.program (process.foreground_process ())
 
         # checking if the process exists
-        if currApp.name != None:
-            if not database.in_program_list (currApp.name):
-                database.add_program(currApp)
-            
+        if currApp.name != None:    
             if currApp != prevApp:
                 if prevApp.name != None:
                     prevApp.set_time ("end")
                 
                 currApp.set_time ("start")
-                prevApp = currApp
-                
+                prevApp = currApp                
 
         return None
         

@@ -2,6 +2,7 @@ from psutil         import Process, NoSuchProcess, AccessDenied
 from win32gui       import GetForegroundWindow
 from win32process   import GetWindowThreadProcessId
 from .calc_time     import current_time, to_utc
+from .database      import in_program_list, add_program, pid
 
 # During  intialization,  it is possible that None is passed due  to  some 
 # error. Hence, the type is compared to determine if its an Process object 
@@ -18,7 +19,14 @@ class program:
 
             # oneshot is for optimization
             with application.oneshot ():    
-                self.name = application.name ().strip (".exe")
+                self.name = application.name ()[0:-4]
+
+            # adds program into database if its not entered previously
+            if not in_program_list (self.name):
+                add_program (self.name)
+            
+            self.pid = pid (self.name)
+            
 
         elif isinstance (application, type (None)):
             self.name = None
@@ -60,10 +68,3 @@ def foreground_process ():
         return None
     except ValueError:
         return None
-
-def in_current (app: program, orderedAppList: list) -> bool: 
-    # To check if the app is currently running
-    if app in orderedAppList:
-        return True
-    else:
-        return False
