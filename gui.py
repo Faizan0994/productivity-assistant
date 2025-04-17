@@ -34,7 +34,10 @@ class MainWindow(QMainWindow):
 
     def initUI(self): # Builds the basic structure
         centralWidget = QWidget() # The window must have a central widget
-        centralWidget.setStyleSheet(f"""background-color: {self.bgColor};""")
+        centralWidget.setStyleSheet(f"""
+                                    background-color: {self.bgColor};
+                                    font-family: inter
+                                    """)
 
         fontId = QFontDatabase.addApplicationFont("./assets/inter.ttf")
         interFontFamily = QFontDatabase.applicationFontFamilies(fontId)[0] # first element is the font we want to use
