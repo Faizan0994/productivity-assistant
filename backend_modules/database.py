@@ -14,13 +14,16 @@ def set_database (path, name):
     dbcur = database.cursor ()
     dbcur.execute   ("""
                      CREATE TABLE programs 
-                     (id INTEGER PRIMARY KEY AUTOINCREMENT, 
-                     name TEXT)""")
+                     (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                     name TEXT NOT NULL)
+                     """)
     
     dbcur.execute   ("""
                      CREATE TABLE time 
-                     (program_id INTEGER, 
-                     name TEXT,
+                     (index INTEGER NOT NULL
+                     program_id INTEGER NOT NULL,
+                     start TEXT,
+                     end TEXT,
                      FOREIGN KEY(group_id)
                         REFRENCE programs (id))
                      """)
