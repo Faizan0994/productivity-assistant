@@ -36,7 +36,7 @@ database = sqlite3.connect (join (databasePath, databaseName))
 # tablesdb = cursordb.execute ("SELECT name FROM sqlite_master")
 # programsdb = cursordb.execute ("SELECT name FROM sqlite_master WHERE name = 'progams'")
 
-def addProgram (database: sqlite3.Connection, programObj: program):
+def addProgram (programObj: program):
     cursordb = database.cursor ()
     cursordb.execute ("INSERT INTO programs VALUES (NULL, ?)", [programObj.name])   # inorder to auto increment use null
     database.commit ()

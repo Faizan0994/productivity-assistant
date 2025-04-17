@@ -10,15 +10,16 @@ def assistant (currentAppList) -> process.program:
     while True:
         # if not needed remove it
         currentAppList.sort (key = lambda application: application.name)
-        
         app = process.program (process.foreground_process ())
 
         # checking if the process exists
         if app.name != None:
             if not process.in_current (app, current):
                 currentAppList.append (app)
-                # do something... 
+                # do something...
 	  	    
+            # if app is not in the database
+
         for application in currentAppList:
             # print (application.name, end = " ")
             return application
@@ -33,4 +34,4 @@ import sqlite3
 
 x = assistant (current)
 print (x.name)
-addProgram (database, x)
+addProgram (x)
