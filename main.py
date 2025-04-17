@@ -14,6 +14,9 @@ def assistant (prevApp: process.program):
 
         # checking if the process exists
         if currApp.name != None:
+            if not database.in_program_list (currApp.name):
+                database.add_program(currApp)
+            
             if currApp != prevApp:
                 if prevApp.name != None:
                     prevApp.set_time ("end")
@@ -21,11 +24,6 @@ def assistant (prevApp: process.program):
                 currApp.set_time ("start")
                 prevApp = currApp
                 
-            if not database.in_program_list (currApp.name):
-                database.add_program(currApp)
-                    
-                # if not app.name in database.programList ():
-                #     database.addProgram (app)	  	    
 
         return None
         

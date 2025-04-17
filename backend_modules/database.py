@@ -2,7 +2,7 @@ import sqlite3
 
 from win32api   import GetUserName
 from pathlib    import PureWindowsPath
-from os         import access, listdir, mkdir
+from os         import mkdir
 from os.path    import expanduser, join, isdir
 from .process   import program
 
@@ -12,7 +12,18 @@ from shutil     import rmtree
 def set_database (path, name):
     database = sqlite3.connect (join (path, name))
     dbcur = database.cursor ()
-    dbcur.execute ("CREATE TABLE programs (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR (255))")
+    dbcur.execute   ("""
+                     CREATE TABLE programs 
+                     (id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                     name TEXT)""")
+    
+    dbcur.execute   ("""
+                     CREATE TABLE time 
+                     (program_id INTEGER, 
+                     name TEXT,
+                     FOREIGN KEY(group_id)
+                        REFRENCE programs (id))
+                     """)
 
 # global variables
 userName = GetUserName ()
@@ -35,14 +46,9 @@ del (freshDownload)
 database = sqlite3.connect (join (databasePath, databaseName))
 cursordb = database.cursor ()
 
-# tablesdb = cursordb.execute ("SELECT name FROM sqlite_master")
-# programsdb = cursordb.execute ("SELECT name FROM sqlite_master WHERE name = 'progams'")
-
 def add_program (programObj: program):
     cursordb.execute ("INSERT INTO programs VALUES (NULL, ?)", [programObj.name])   # inorder to auto increment use null
     database.commit ()
-    # to check ...
-    # print (cursordb.execute ("SELECT * FROM programs").fetchall ())
 
 def in_program_list (program: str) -> bool:
     """
@@ -58,6 +64,3 @@ def in_program_list (program: str) -> bool:
          return False
     else:
          return True
-    
-# for emergency situations ...
-# databasePath = join (expanduser ("~"), PureWindowsPath ("Documents", "productivity-assistant", "database"))
