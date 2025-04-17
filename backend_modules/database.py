@@ -82,11 +82,13 @@ def add_current (pid: int, sartTime: str) -> int:
     return entry_id
 
 def update_endTime_in_current (index: int, endTime: str) -> int:
-     cursordb.execute   ("""
+    cursordb.execute    ("""
                          UPDATE time_stamps SET end = ? WHERE id = ?
                          """, [endTime, index])
-     for i in cursordb.execute ("SELECT * FROM time_stamps WHERE id = ?", [index]):
-          print (i)
+    
+    # uncomment it to display results...
+    # for i in cursordb.execute ("SELECT * FROM time_stamps WHERE id = ?", [index]):
+    #       print (i)
 
 def in_program_list (name: str) -> bool:
     """
