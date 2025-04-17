@@ -28,7 +28,7 @@ def set_database (path, name):
                      """)
     
     dbcur.execute   ("""
-                     CREATE INDEX program_name ON programs (name)
+                     CREATE UNIQUE INDEX program_name ON programs (name)
                      """)
 
 # global variables
