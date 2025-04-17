@@ -6,20 +6,23 @@ from time       import sleep
 # important control flags
 asstiantRunning = True
 
-current = []
+app = process.program (None)
 
-def assistant (currentAppList) -> process.program:
+def assistant (prevApp: process.program):
     while True:
-        # if not needed remove it
-        currentAppList.sort (key = lambda application: application.name)
-        app = process.program (process.foreground_process ())
+        currApp = process.program (process.foreground_process ())
 
         # checking if the process exists
-        if app.name != None:
-            if not process.in_current (app, current):
-                currentAppList.append (app)
-                if not database.in_program_list (app.name):
-                    database.add_program(app)
+        if currApp.name != None:
+            if currApp != prevApp:
+                if prevApp.name != None:
+                    prevApp.set_time ("end")
+                
+                currApp.set_time ("start")
+                prevApp = currApp
+                
+            if not database.in_program_list (currApp.name):
+                database.add_program(currApp)
                     
                 # if not app.name in database.programList ():
                 #     database.addProgram (app)	  	    
@@ -31,4 +34,4 @@ def assistant (currentAppList) -> process.program:
 
 
 # main function execution 
-assistant (current)
+assistant (app)
