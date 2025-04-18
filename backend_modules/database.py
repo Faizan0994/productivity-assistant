@@ -77,7 +77,7 @@ def add_current (pid: int, sartTime: str) -> int:
                                                             """)] [0]
     return entry_id
 
-def update_endTime_in_current (index: int, endTime: str) -> int:
+def update_endtime (index: int, endTime: str) -> int:
     cursordb.execute    ("""
                          UPDATE time_stamps SET end = ? WHERE id = ?
                          """, [endTime, index])

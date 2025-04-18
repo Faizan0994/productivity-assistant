@@ -17,14 +17,14 @@ def assistant (prevApp: process.program):
             if currApp != prevApp:
                 if prevApp.name != None:
                     prevApp.set_time ("end")
-                    database.update_endTime_in_current (index, prevApp.endTime)
+                    database.update_endtime (index, prevApp.endTime)
                 
                 currApp.set_time ("start")
                 index = database.add_current (currApp.pid, currApp.startTime)
                 prevApp = currApp
             else:
                 prevApp.set_time ("end")
-                database.update_endTime_in_current (index, prevApp.endTime)
+                database.update_endtime (index, prevApp.endTime)
         
         print()
         sleep (5)
