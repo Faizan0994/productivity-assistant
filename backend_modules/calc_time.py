@@ -14,8 +14,10 @@ def to_utc (datetimeObj: datetime):
     return datetimeObj.astimezone (timezone ("UTC"))
 
 def weekdays () -> list:
-    weeklist = []
+    # is it good to hard code these values?
+    weekStringList = ["Monday", "Tuesday", "Wednessday", "Thursday", "Friday", "Saturday", "Sunday"]
+    weekList = []
     today = current_time ()
     for n in range (7):
-        weeklist.append ((today - timedelta (days = n)).weekday ())
-    return weeklist
+        weekList.append (weekStringList [(today - timedelta (days = n)).weekday ()])
+    return weekList
