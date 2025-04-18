@@ -17,7 +17,7 @@ def weekdays () -> list:
     # is it good to hard code these values?
     weekStringList = ["Monday", "Tuesday", "Wednessday", "Thursday", "Friday", "Saturday", "Sunday"]
     weekList = []
-    today = current_time ()
+    today = datetime.now ()
     for n in range (7):
         weekList.append (weekStringList [(today - timedelta (days = n)).weekday ()])
     return weekList

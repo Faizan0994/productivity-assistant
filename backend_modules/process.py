@@ -9,14 +9,8 @@ from .database      import in_program_list, add_program, pid
 # or NoneType. For encountering an error the name is set to none.
 
 class program:
-    __app = None
-
     def __init__ (self, application):
         if isinstance (application, Process):
-            self.__app = application
-            self.startTime = None
-            self.endTime = None
-
             # oneshot is for optimization
             with application.oneshot ():    
                 self.name = application.name ()[0:-4]
@@ -43,11 +37,6 @@ class program:
             self.endTime = to_utc (current_time ()).strftime ("%y-%m-%d %H:%M:%S")
         else:
             raise Exception (f"program.set_time:\t{variable} is not accepted as an argument")
-
-
-    def running (self) -> bool:
-        # do not use pid_exists
-        return self.__app.is_running ()
 
 
 def foreground_process ():

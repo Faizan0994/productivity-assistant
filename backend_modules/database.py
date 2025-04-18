@@ -4,6 +4,7 @@ from win32api   import GetUserName
 from pathlib    import PureWindowsPath
 from os         import mkdir
 from os.path    import expanduser, join, isdir
+from datetime   import datetime, time, date
 
 # remove after completing ...
 from shutil     import rmtree
@@ -12,25 +13,24 @@ from shutil     import rmtree
 def set_database (path, name):
     database = sqlite3.connect (join (path, name))
     dbcur = database.cursor ()
-    dbcur.execute   ("""
-                     CREATE TABLE programs 
-                     (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                     name TEXT NOT NULL)
-                     """)
+    dbcur.executescript     ("""
+                            BEGIN;
+                            CREATE TABLE programs 
+                            (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            name TEXT NOT NULL);
+                             
+                            CREATE TABLE time_stamps 
+                            (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            program_id INTEGER NOT NULL,
+                            start TEXT,
+                            end TEXT,
+                            FOREIGN KEY (program_id) REFERENCES programs (id));
+                             
+                            CREATE UNIQUE INDEX program_name ON programs (name);
+                            
+                            COMMIT;
+                            """)
     
-    dbcur.execute   ("""
-                     CREATE TABLE time_stamps 
-                     (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                     program_id INTEGER NOT NULL,
-                     start TEXT,
-                     end TEXT,
-                     FOREIGN KEY (program_id) REFERENCES programs (id))
-                     """)
-    
-    dbcur.execute   ("""
-                     CREATE UNIQUE INDEX program_name ON programs (name)
-                     """)
-
 # global variables
 userName = GetUserName ()
 databaseName = "data.db"
@@ -81,7 +81,8 @@ def update_endtime (index: int, endTime: str) -> int:
     cursordb.execute    ("""
                          UPDATE time_stamps SET end = ? WHERE id = ?
                          """, [endTime, index])
-    
+    database.commit ()
+
     # uncomment it to display results...
     # for i in cursordb.execute ("SELECT * FROM time_stamps WHERE id = ?", [index]):
     #       print (i)
@@ -99,3 +100,21 @@ def in_program_list (name: str) -> bool:
          return False
     else:
          return True
+
+def total_time (name: str, start, end):
+    totalTime = cursordb.execute   ("""
+                                    SELECT name, start, end FROM time_stamps 
+                                    LEFT JOIN programs on programs.id = time_stamps.program_id
+                                    WHERE name = ? 
+                                        AND end IS NOT NULL
+                                    """, [name])
+    
+    if isinstance(start, date) and isinstance (end, date):
+        totalTime = totalTime.execute   ("""
+                                        SELECT
+                                        """) 
+        pass
+
+    for i in totalTime:
+        print (i)
+    print ()
