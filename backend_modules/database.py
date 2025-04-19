@@ -101,20 +101,29 @@ def in_program_list (name: str) -> bool:
     else:
          return True
 
-def total_time (name: str, start, end):
-    totalTime = cursordb.execute   ("""
-                                    SELECT name, start, end FROM time_stamps 
-                                    LEFT JOIN programs on programs.id = time_stamps.program_id
-                                    WHERE name = ? 
-                                        AND end IS NOT NULL
-                                    """, [name])
-    
-    if isinstance(start, date) and isinstance (end, date):
-        totalTime = totalTime.execute   ("""
-                                        SELECT
-                                        """) 
-        pass
+def total_time (name: str, start = None, end = None):
+    totalTimeSql = \
+"\
+SELECT name, DATETIME (start), DATETIME (end) FROM time_stamps \
+LEFT JOIN programs on programs.id = time_stamps.program_id \
+WHERE name = ? \
+AND end IS NOT NULL \
+"    
+    parameters = [name]
 
-    for i in totalTime:
-        print (i)
-    print ()
+
+    if isinstance(start, date) and isinstance (end, date):
+        totalTimeSQL += \
+"\
+AND DATE (start) =< ? AND DATE (end) >= ? \
+"
+        start = start.strftime("%Y-%m-%d")
+        end = end.strftime("%Y-%m-%d")
+        
+        parameters.extend (start, end)
+
+    totalTime = cursordb.execute (totalTimeSql, parameters)
+    
+    for entry in totalTime:
+        print (entry)
+    # print (totalTimeSql)
