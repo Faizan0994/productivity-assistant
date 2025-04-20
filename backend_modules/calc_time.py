@@ -14,24 +14,41 @@ def add_local_tz (datetimeObj: datetime) -> datetime:
 def to_utc (datetimeObj: datetime) -> datetime:
     return datetimeObj.astimezone (timezone ("UTC"))
 
-# maximum points: 10
 def x_points (start: datetime, end: datetime) -> list:
+    """
+    This scary function returns the list of maximum 10
+    points of any given range between 1 minute to  any 
+    number of days.
+    """
+
     difference = end - start
 
     if difference >= timedelta (minutes = 1):
         if difference < timedelta (hours = 1):
             start = start - timedelta (seconds = start.second)
-            end = start - timedelta (seconds = end.second)
 
             increment = timedelta (minutes = 1)
             pointsTemp = [start]
             totalRange = range (difference.seconds // 60)
+        
+        elif difference < timedelta (hours = 24):
+            start = start - timedelta (minutes = start.minute, seconds = start.second)
 
-            for i in totalRange:
-                pointsTemp.append (pointsTemp[-1] + increment)
+            increment = timedelta (days = 1)
+            pointsTemp = [start]
+            totalRange = range (difference.seconds // (60 * 60))
             
-            del (totalRange, increment, start, end)
+        else:
+            start = start - timedelta (hours = start.hour, minutes = start.minute, seconds = start.second)
 
+            increment = timedelta (days = 1)
+            pointsTemp = [start]
+            totalRange = range (difference.days)
+            
+        for i in totalRange:
+            pointsTemp.append (pointsTemp[-1] + increment)
+        
+        del (totalRange, increment, start, end)
 
         length = len (pointsTemp) 
         if length > 10:
@@ -45,20 +62,21 @@ def x_points (start: datetime, end: datetime) -> list:
                 if i % totalPoints == 0:
                     points.append (pointsTemp[-(i + 1)])
             points.reverse ()
+        
         else:
             points = deepcopy (pointsTemp)
 
         del (pointsTemp)
+
         
         points.insert(0, points[0] - (points[1] - points[0]))
 
         for i in points:
             print (i)
-
     else:
         # sorry... what?
         pass
     
     # print (difference)
 
-x_points (datetime(2025, 4, 20, 12, 0, 0), datetime(2025, 4, 20, 12, 59, 0))
+x_points (datetime(2025, 4, 3, 0, 0, 0), datetime(2025, 4, 30, 12, 0, 0))
