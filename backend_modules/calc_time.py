@@ -18,59 +18,39 @@ def x_points (start: datetime, end: datetime) -> list:
     """
     This scary function returns the list of maximum 10
     points of any given range between 1 minute to  any 
-    number of days.
+    number of days. Drops time from start if can't fit
+    time in the range of 10.
     """
-
-    # This function can be improved. Instead of making 
-    # an  array calculating the size and then  copying 
-    # the  array again one can avoid it be  performing 
-    # calculations  before  and then making the  array 
-    # once for all
-
+    
     difference = end - start
 
     if difference >= timedelta (minutes = 1):
         if difference < timedelta (hours = 1):
-            start = start - timedelta (seconds = start.second)
-            increment = timedelta (minutes = 1)
-            pointsTemp = [start]
-            totalRange = range (difference.seconds // 60)
-        
-        elif difference < timedelta (hours = 24):
-            start = start - timedelta (minutes = start.minute, seconds = start.second)
-            increment = timedelta (days = 1)
-            pointsTemp = [start]
-            totalRange = range (difference.seconds // (60 * 60))
-            
+            end = end - timedelta (seconds = end.second)
+            decrement = timedelta (minutes = 1)
+        elif difference < timedelta (days = 1):
+            end = end - timedelta (minutes= end.minute, seconds = end.second)
+            decrement = timedelta (hours = 1)
         else:
-            start = start - timedelta (hours = start.hour, minutes = start.minute, seconds = start.second)
-            increment = timedelta (days = 1)
-            pointsTemp = [start]
-            totalRange = range (difference.days)
-            
-        for i in totalRange:
-            pointsTemp.append (pointsTemp[-1] + increment)
-        
-        del (totalRange, increment, start, end)
+            end = end - timedelta (hours= end.hour, minutes= end.minute, seconds = end.second)
+            decrement = timedelta (days = 1)
 
-        length = len (pointsTemp) 
-        if length > 10:
-            totalPoints = length // 10
-            pointsTemp = pointsTemp [length - (totalPoints * 10):]
-            points = []
-            length = len (pointsTemp)
+        unitTime = int (difference.total_seconds () // decrement.total_seconds ())
+        rows = int (unitTime // 10)
+        points = []
 
-            for i in range (length):
-                if i % totalPoints == 0:
-                    points.append (pointsTemp[-(i + 1)])
-            points.reverse ()
-        
+        if rows == 0:
+            itter = range (unitTime + 1)
         else:
-            points = deepcopy (pointsTemp)
-
-        del (pointsTemp)
-        points.insert(0, points[0] - (points[1] - points[0]))
-
-        return points
+            itter = range (11)
+            decrement = decrement * rows 
+        
+        for n in itter:
+                points.append(end - (n * decrement))
+        
+        for i in points:
+            print (i)
+        
+        print (rows)
     else:
         raise Exception (f"x points:\ttime delta is very small")
