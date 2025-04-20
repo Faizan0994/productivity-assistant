@@ -74,8 +74,7 @@ def x_points (start: datetime, end: datetime) -> list:
         for i in points:
             print (i)
     else:
-        # sorry... what?
-        pass
+        raise Exception (f"x points:\ttime delta is very smale")
     
     # print (difference)
 
