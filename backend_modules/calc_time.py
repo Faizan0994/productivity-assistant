@@ -67,15 +67,8 @@ def x_points (start: datetime, end: datetime) -> list:
             points = deepcopy (pointsTemp)
 
         del (pointsTemp)
-
-        
         points.insert(0, points[0] - (points[1] - points[0]))
 
-        for i in points:
-            print (i)
+        return points
     else:
         raise Exception (f"x points:\ttime delta is very smale")
-    
-    # print (difference)
-
-x_points (datetime(2025, 4, 3, 0, 0, 0), datetime(2025, 4, 30, 12, 0, 0))
