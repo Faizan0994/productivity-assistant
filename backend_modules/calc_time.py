@@ -46,11 +46,9 @@ def x_points (start: datetime, end: datetime) -> list:
             decrement = decrement * rows 
         
         for n in itter:
-                points.append(end - (n * decrement))
-        
-        for i in points:
-            print (i)
-        
-        print (rows)
+                points.append(end - (n * decrement))        
+        points.reverse ()
+
+        return points
     else:
         raise Exception (f"x points:\ttime delta is very small")
