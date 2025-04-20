@@ -21,26 +21,29 @@ def x_points (start: datetime, end: datetime) -> list:
     number of days.
     """
 
+    # This function can be improved. Instead of making 
+    # an  array calculating the size and then  copying 
+    # the  array again one can avoid it be  performing 
+    # calculations  before  and then making the  array 
+    # once for all
+
     difference = end - start
 
     if difference >= timedelta (minutes = 1):
         if difference < timedelta (hours = 1):
             start = start - timedelta (seconds = start.second)
-
             increment = timedelta (minutes = 1)
             pointsTemp = [start]
             totalRange = range (difference.seconds // 60)
         
         elif difference < timedelta (hours = 24):
             start = start - timedelta (minutes = start.minute, seconds = start.second)
-
             increment = timedelta (days = 1)
             pointsTemp = [start]
             totalRange = range (difference.seconds // (60 * 60))
             
         else:
             start = start - timedelta (hours = start.hour, minutes = start.minute, seconds = start.second)
-
             increment = timedelta (days = 1)
             pointsTemp = [start]
             totalRange = range (difference.days)
@@ -54,7 +57,6 @@ def x_points (start: datetime, end: datetime) -> list:
         if length > 10:
             totalPoints = length // 10
             pointsTemp = pointsTemp [length - (totalPoints * 10):]
-            
             points = []
             length = len (pointsTemp)
 
