@@ -2,7 +2,6 @@ from tzlocal    import get_localzone_name
 from pytz       import timezone
 from datetime   import datetime
 from datetime   import timedelta
-from copy       import deepcopy
 
 def current_time () -> datetime:
     return add_local_tz(datetime.today ())
