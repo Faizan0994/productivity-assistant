@@ -71,4 +71,4 @@ def x_points (start: datetime, end: datetime) -> list:
 
         return points
     else:
-        raise Exception (f"x points:\ttime delta is very smale")
+        raise Exception (f"x points:\ttime delta is very small")
