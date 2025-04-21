@@ -1,5 +1,7 @@
 from PyQt5.QtWidgets import QScrollArea
 from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtGui import QPen, QColor
+import pyqtgraph as pg
 
 class SmartScrollArea(QScrollArea):
     def __init__(self):
@@ -21,3 +23,23 @@ class SmartScrollArea(QScrollArea):
 
     def hideScrollbar(self):
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
+class FixedAxis(pg.AxisItem): # Tweaking the axes a little
+    def __init__(self, labels=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.labels = labels or {}
+
+    def tickStrings(self, values, scale, spacing): # Overriding the tickStrings method
+        return [self.labels.get(int(val), str(int(val))) for val in values]
+    
+    def tickValues(self, minVal, maxVal, size): # Overriding the tickValues method, to remove subticks
+        majorTicks = [(i, 0) for i in range(int(minVal), int(maxVal) + 1)]
+        return [(1, [i for i, _ in majorTicks])]
+    
+class CustomGridViewBox(pg.ViewBox): # Allows changing grid color
+    def __init__(self, color = "black", *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.gridPen = QPen(QColor(color))
+        self.gridPen.setWidth(1)
+        self.gridPen.setStyle(Qt.DotLine)
+        self.enableAutoRange()
