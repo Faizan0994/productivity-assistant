@@ -28,10 +28,10 @@ def x_points (start: datetime, end: datetime) -> list:
             end = end - timedelta (seconds = end.second)
             decrement = timedelta (minutes = 1)
         elif difference < timedelta (days = 1):
-            end = end - timedelta (minutes= end.minute, seconds = end.second)
+            end = end - timedelta (minutes = end.minute, seconds = end.second)
             decrement = timedelta (hours = 1)
         else:
-            end = end - timedelta (hours= end.hour, minutes= end.minute, seconds = end.second)
+            end = end - timedelta (hours = end.hour, minutes = end.minute, seconds = end.second)
             decrement = timedelta (days = 1)
 
         unitTime = int (difference.total_seconds () // decrement.total_seconds ())
