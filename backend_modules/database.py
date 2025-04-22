@@ -93,7 +93,8 @@ def in_program_list (name: str) -> bool:
     Checks for the number of times the name appears 
     in  the programs and  return false if count  is
     zero
-    """    
+    """
+      
     if [count[0] for count in cursordb.execute ("""
                                                 SELECT COUNT (*) FROM 
                                                 (SELECT name FROM programs WHERE name = ?)
@@ -103,6 +104,11 @@ def in_program_list (name: str) -> bool:
          return True
 
 def cordinates (timerange: list, name: str = ""):
+    """
+    Returns a list of touples of time stamp displayed on x-axis 
+    and the time spent in each duration
+    """
+
     points = []
     
     if len(timerange) >= 3:
@@ -125,10 +131,10 @@ def cordinates (timerange: list, name: str = ""):
 
 def interval_time (start: str = "", end: str = "", name: str = "") -> list:
     """
-    returns the time intervals between start and end
+    Returns the time intervals between start and end
     if  empty  strings  are passed, it  returns  the 
     total  time  spent  the  name  will  filter  the 
-    intervals by application
+    intervals by application. 
     """
 
     executionTuple = execution (start, end)
@@ -164,6 +170,10 @@ def interval_time (start: str = "", end: str = "", name: str = "") -> list:
     return timeSpent
 
 def programs_in_duration (start: str = "", end: str = "") -> list:
+    """
+    Returns list of programs that have been runed
+    from start time to end time
+    """
     executionTuple = execution (start, end)
     sql = executionTuple[0]
     paramaters = executionTuple[1]
@@ -173,6 +183,11 @@ def programs_in_duration (start: str = "", end: str = "") -> list:
     return programs
 
 def execution (start:str, end: str) -> tuple:
+    """
+    This is a common function that is used by programs 
+    in duration and interval time
+    """
+
     sql =   "SELECT name, start, end FROM time_stamps\
             LEFT JOIN programs ON programs.id = time_stamps.program_id\
             WHERE end IS NOT NULL"
