@@ -50,4 +50,10 @@ def x_points (start: datetime, end: datetime) -> list:
 
         return points
     else:
-        raise Exception (f"x points: time delta is very small: {difference}")
+        class SmallInterval (Exception):
+            def __init__(self, message):
+                self.message = message
+                super().__init__(message)
+            def __str__ (self):
+                return self.message
+        raise SmallInterval ("The interval is small")

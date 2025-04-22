@@ -102,24 +102,28 @@ def in_program_list (name: str) -> bool:
     else:
          return True
 
-def total_time (timerange: list, name: str = ""):
+def cordinates (timerange: list, name: str = ""):
     points = []
     
     if len(timerange) >= 3:
-        # add to_utc later
-        timerange = [t.strftime ("%Y-%m-%d %H:%M:%S") for t in timerange]
+        timerange = [to_utc(t).strftime ("%Y-%m-%d %H:%M:%S") for t in timerange]
         for startTime, endTime in zip (timerange[0:-1], timerange[1::]):
-            intervals = calculate_interval (start = startTime, end = endTime, name = name)
+            intervals = interval_time (start = startTime, end = endTime, name = name)
             points.append ((endTime, intervals))
     else:
-        # raise error
-        pass
+        class ArrayLength (Exception):
+            def __init__(self, message):
+                self.message = message
+                super().__init__(message)
+            def __str__(self):
+                return self.message
+        raise ArrayLength ("The length of list is too small")
 
     for entry in points:
         print (entry[0], entry[1].total_seconds ())
 
 
-def calculate_interval (start: str = "", end: str = "", name: str = "") -> sqlite3.Cursor:
+def interval_time (start: str = "", end: str = "", name: str = "") -> sqlite3.Cursor:
     """
     returns the time intervals between start and end
     if  empty  strings  are passed, it  returns  the 
@@ -127,24 +131,10 @@ def calculate_interval (start: str = "", end: str = "", name: str = "") -> sqlit
     intervals by application
     """
 
-    # temporary database:
-    database = sqlite3.connect (PureWindowsPath ("test_data", "data.db"))
-    cursordb = database.cursor ()
-
-    sql =   "SELECT name, start, end FROM time_stamps\
-            LEFT JOIN programs ON programs.id = time_stamps.program_id\
-            WHERE end IS NOT NULL"
-    parameters = []
-    
-    if not (start == "" and end == ""):
-        sql =   f"SELECT * FROM ({sql})\
-                WHERE DATETIME (start) > DATETIME (?)\
-                OR (DATETIME (start) < ? AND DATETIME (end) > ?)"
-        sql =   f"SELECT * FROM ({sql})\
-                WHERE DATETIME (end) <= ?\
-                OR (DATETIME (end) > ? AND DATETIME (start) < ?)"
-        
-        parameters.extend ([start, start, start, end, end, end])
+    executionTuple = execution (start, end)
+    sql = executionTuple[0]
+    parameters = executionTuple[1]
+    del (executionTuple)
     
     if not name == "":
         sql =   f"SELECT * FROM ({sql})\
@@ -171,4 +161,36 @@ def calculate_interval (start: str = "", end: str = "", name: str = "") -> sqlit
         else:
             timeSpent += endOfInterval - startOfInterval
     
-    return (timeSpent)
+    return timeSpent
+
+def programs_in_duration (start: str = "", end: str = ""):
+
+    # temporary database:
+    database = sqlite3.connect (PureWindowsPath ("test_data", "data.db"))
+    cursordb = database.cursor ()
+
+    executionTuple = execution (start, end)
+    sql = executionTuple[0]
+    paramaters = executionTuple[1]
+    del (executionTuple)
+    sql = f"SELECT DISTINCT (name) FROM ({sql})"
+    programs = [app[0] for app in cursordb.execute (sql, paramaters)]
+    print (programs)
+
+def execution (start:str, end: str) -> tuple:
+    sql =   "SELECT name, start, end FROM time_stamps\
+            LEFT JOIN programs ON programs.id = time_stamps.program_id\
+            WHERE end IS NOT NULL"
+    parameters = []
+    
+    if not (start == "" and end == ""):
+        sql =   f"SELECT * FROM ({sql})\
+                WHERE DATETIME (start) > DATETIME (?)\
+                OR (DATETIME (start) < ? AND DATETIME (end) > ?)"
+        sql =   f"SELECT * FROM ({sql})\
+                WHERE DATETIME (end) <= ?\
+                OR (DATETIME (end) > ? AND DATETIME (start) < ?)"
+        
+        parameters.extend ([start, start, start, end, end, end])
+    
+    return (sql, parameters)
