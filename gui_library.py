@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QScrollArea
+from PyQt5.QtWidgets import QScrollArea, QWidget
 from PyQt5.QtCore import QTimer, Qt
-from PyQt5.QtGui import QPen, QColor
+from PyQt5.QtGui import QPen, QColor, QPainter
 import pyqtgraph as pg
 
 class SmartScrollArea(QScrollArea):
@@ -43,3 +43,22 @@ class CustomGridViewBox(pg.ViewBox): # Allows changing grid color
         self.gridPen.setWidth(1)
         self.gridPen.setStyle(Qt.DotLine)
         self.enableAutoRange()
+
+class LineDrawer(QWidget):
+    def __init__(self, color = "black", direction = "horizontal", strokeWidth = 1):
+        super().__init__()
+        self.color = color
+        self.direction = direction
+        self.strokeWidth = strokeWidth
+        self.update()
+    
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        pen = QPen(QColor(self.color), self.strokeWidth)
+        painter.setPen(pen)
+
+        if self.direction == "horizontal":
+            painter.drawLine(0, self.height() // 2, self.width(), self.height() // 2)
+        
+        if self.direction == "vertical":
+            painter.drawLine(self.width() // 2, 0, self.width() // 2, self.height())
