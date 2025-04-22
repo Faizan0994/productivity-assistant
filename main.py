@@ -44,4 +44,4 @@ for i in points:
     print (i)
 print ()
 
-programs_in_duration (start = datetime (2025, 4, 19, 10, 0, 0).isoformat (), end = datetime (2025, 4, 22, 12, 0, 0).isoformat ())
+programs_in_duration ()

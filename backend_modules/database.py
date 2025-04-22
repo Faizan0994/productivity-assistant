@@ -106,8 +106,8 @@ def cordinates (timerange: list, name: str = ""):
     points = []
     
     if len(timerange) >= 3:
-        timerange = [to_utc(t).strftime ("%Y-%m-%d %H:%M:%S") for t in timerange]
-        for startTime, endTime in zip (timerange[0:-1], timerange[1::]):
+        timerangeUTC = [to_utc(t).strftime ("%Y-%m-%d %H:%M:%S") for t in timerange]
+        for startTime, endTime in zip (timerangeUTC[0:-1], timerangeUTC[1::]):
             intervals = interval_time (start = startTime, end = endTime, name = name)
             points.append ((endTime, intervals))
     else:
@@ -123,7 +123,7 @@ def cordinates (timerange: list, name: str = ""):
         print (entry[0], entry[1].total_seconds ())
 
 
-def interval_time (start: str = "", end: str = "", name: str = "") -> sqlite3.Cursor:
+def interval_time (start: str = "", end: str = "", name: str = "") -> list:
     """
     returns the time intervals between start and end
     if  empty  strings  are passed, it  returns  the 
@@ -163,19 +163,14 @@ def interval_time (start: str = "", end: str = "", name: str = "") -> sqlite3.Cu
     
     return timeSpent
 
-def programs_in_duration (start: str = "", end: str = ""):
-
-    # temporary database:
-    database = sqlite3.connect (PureWindowsPath ("test_data", "data.db"))
-    cursordb = database.cursor ()
-
+def programs_in_duration (start: str = "", end: str = "") -> list:
     executionTuple = execution (start, end)
     sql = executionTuple[0]
     paramaters = executionTuple[1]
     del (executionTuple)
     sql = f"SELECT DISTINCT (name) FROM ({sql})"
     programs = [app[0] for app in cursordb.execute (sql, paramaters)]
-    print (programs)
+    return programs
 
 def execution (start:str, end: str) -> tuple:
     sql =   "SELECT name, start, end FROM time_stamps\
@@ -194,3 +189,7 @@ def execution (start:str, end: str) -> tuple:
         parameters.extend ([start, start, start, end, end, end])
     
     return (sql, parameters)
+
+# temporary database, use it for debugging ...
+# database = sqlite3.connect (PureWindowsPath ("test_data", "data.db"))
+# cursordb = database.cursor ()
