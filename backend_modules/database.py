@@ -94,7 +94,7 @@ def in_program_list (name: str) -> bool:
     in  the programs and  return false if count  is
     zero
     """
-      
+
     if [count[0] for count in cursordb.execute ("""
                                                 SELECT COUNT (*) FROM 
                                                 (SELECT name FROM programs WHERE name = ?)
@@ -112,8 +112,8 @@ def cordinates (timerange: list, name: str = ""):
     points = []
     
     if len(timerange) >= 3:
-        timerangeUTC = [to_utc(t).strftime ("%Y-%m-%d %H:%M:%S") for t in timerange]
-        for startTime, endTime in zip (timerangeUTC[0:-1], timerangeUTC[1::]):
+        timerange = [t.isoformat () for t in timerange]
+        for startTime, endTime in zip (timerange[0:-1], timerange[1::]):
             intervals = interval_time (start = startTime, end = endTime, name = name)
             points.append ((endTime, intervals))
     else:
@@ -134,7 +134,7 @@ def interval_time (start: str = "", end: str = "", name: str = "") -> list:
     Returns the time intervals between start and end
     if  empty  strings  are passed, it  returns  the 
     total  time  spent  the  name  will  filter  the 
-    intervals by application. 
+    intervals by application.
     """
 
     executionTuple = execution (start, end)
@@ -174,6 +174,7 @@ def programs_in_duration (start: str = "", end: str = "") -> list:
     Returns list of programs that have been runed
     from start time to end time
     """
+
     executionTuple = execution (start, end)
     sql = executionTuple[0]
     paramaters = executionTuple[1]
@@ -185,8 +186,13 @@ def programs_in_duration (start: str = "", end: str = "") -> list:
 def execution (start:str, end: str) -> tuple:
     """
     This is a common function that is used by programs 
-    in duration and interval time
+    in  duration  and  interval  time.  This  function 
+    converts  start and end  to utc format, hence  YOU 
+    DONT NEED TO CONVERT WHERE IT IS CALLED.
     """
+
+    start = to_utc (datetime.fromisoformat (start)).isoformat ()
+    end = to_utc (datetime.fromisoformat (end)).isoformat ()
 
     sql =   "SELECT name, start, end FROM time_stamps\
             LEFT JOIN programs ON programs.id = time_stamps.program_id\

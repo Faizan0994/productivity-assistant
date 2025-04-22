@@ -32,12 +32,11 @@ class program:
     
     def set_time (self, variable:str):
         if variable == "start":
-            self.startTime = to_utc (current_time ()).strftime ("%Y-%m-%d %H:%M:%S")
+            self.startTime = to_utc (current_time ()).isoformat ()
         elif variable == "end":
-            self.endTime = to_utc (current_time ()).strftime ("%Y-%m-%d %H:%M:%S")
+            self.endTime = to_utc (current_time ()).isoformat ()
         else:
             raise Exception (f"program.set_time:\t{variable} is not accepted as an argument")
-
 
 def foreground_process ():
     """
