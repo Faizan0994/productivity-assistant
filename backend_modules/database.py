@@ -4,7 +4,8 @@ from win32api   import GetUserName
 from pathlib    import PureWindowsPath
 from os         import mkdir
 from os.path    import expanduser, join, isdir
-from datetime   import datetime, time, date
+from .calc_time import to_utc
+from datetime   import datetime, timedelta
 
 # remove after completing ...
 from shutil     import rmtree
@@ -43,9 +44,9 @@ if freshDownload:
         # run the introductory program ...
 
 # remove it after making database ...
-else:
-      rmtree (databasePath)
-      exit ("Removed file")
+# else:
+#       rmtree (databasePath)
+#       exit ("Removed file")
 
 del (freshDownload)
 
@@ -101,29 +102,73 @@ def in_program_list (name: str) -> bool:
     else:
          return True
 
-def total_time (name: str, start = None, end = None):
-    totalTimeSql = \
-"\
-SELECT name, DATETIME (start), DATETIME (end) FROM time_stamps \
-LEFT JOIN programs on programs.id = time_stamps.program_id \
-WHERE name = ? \
-AND end IS NOT NULL \
-"    
-    parameters = [name]
-
-
-    if isinstance(start, date) and isinstance (end, date):
-        totalTimeSQL += \
-"\
-AND DATE (start) =< ? AND DATE (end) >= ? \
-"
-        start = start.strftime("%Y-%m-%d")
-        end = end.strftime("%Y-%m-%d")
-        
-        parameters.extend (start, end)
-
-    totalTime = cursordb.execute (totalTimeSql, parameters)
+def total_time (timerange: list, name: str = ""):
+    points = []
     
-    for entry in totalTime:
-        print (entry)
-    # print (totalTimeSql)
+    if len(timerange) >= 3:
+        # add to_utc later
+        timerange = [t.strftime ("%Y-%m-%d %H:%M:%S") for t in timerange]
+        for startTime, endTime in zip (timerange[0:-1], timerange[1::]):
+            intervals = calculate_interval (start = startTime, end = endTime, name = name)
+            points.append ((endTime, intervals))
+    else:
+        # raise error
+        pass
+
+    for entry in points:
+        print (entry[0], entry[1].total_seconds ())
+
+
+def calculate_interval (start: str = "", end: str = "", name: str = "") -> sqlite3.Cursor:
+    """
+    returns the time intervals between start and end
+    if  empty  strings  are passed, it  returns  the 
+    total  time  spent  the  name  will  filter  the 
+    intervals by application
+    """
+
+    # temporary database:
+    database = sqlite3.connect (PureWindowsPath ("test_data", "data.db"))
+    cursordb = database.cursor ()
+
+    sql =   "SELECT name, start, end FROM time_stamps\
+            LEFT JOIN programs ON programs.id = time_stamps.program_id\
+            WHERE end IS NOT NULL"
+    parameters = []
+    
+    if not (start == "" and end == ""):
+        sql =   f"SELECT * FROM ({sql})\
+                WHERE DATETIME (start) > DATETIME (?)\
+                OR (DATETIME (start) < ? AND DATETIME (end) > ?)"
+        sql =   f"SELECT * FROM ({sql})\
+                WHERE DATETIME (end) <= ?\
+                OR (DATETIME (end) > ? AND DATETIME (start) < ?)"
+        
+        parameters.extend ([start, start, start, end, end, end])
+    
+    if not name == "":
+        sql =   f"SELECT * FROM ({sql})\
+                WHERE name = ?"
+        parameters.append (name)
+    
+    sql =   f"SELECT start, end FROM ({sql})"
+
+    intervals = cursordb.execute (sql, parameters)
+    start = datetime.fromisoformat (start)
+    end = datetime.fromisoformat (end)
+    timeSpent = timedelta (0)
+
+    for interval in intervals:
+        startOfInterval = datetime.fromisoformat (interval[0])
+        endOfInterval = datetime.fromisoformat (interval[1])
+        
+        if startOfInterval < start and endOfInterval > end:
+            timeSpent += end - start
+        elif startOfInterval < start and endOfInterval > start:
+            timeSpent += endOfInterval - start
+        elif endOfInterval > end and startOfInterval < end:
+            timeSpent += end - startOfInterval
+        else:
+            timeSpent += endOfInterval - startOfInterval
+    
+    return (timeSpent)

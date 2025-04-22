@@ -34,6 +34,14 @@ def assistant (prevApp: program):
 # main function execution 
 # assistant (app)
 
-import datetime
+from backend_modules.database import total_time
+from backend_modules.calc_time import x_points
+from datetime import datetime
 
-print (datetime.datetime(hour=5, minute=0, second=0).time ())
+print ("Intervals:")
+points = x_points (datetime (2025, 4, 19, 10, 0, 0), datetime (2025, 4, 22, 12, 0, 0))
+for i in points:
+    print (i)
+print ()
+
+total_time (timerange = x_points (datetime (2025, 4, 19, 10, 0, 0), datetime (2025, 4, 22, 12, 0, 0)))
