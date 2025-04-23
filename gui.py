@@ -302,6 +302,10 @@ class MainWindow(QMainWindow):
   
     
 
+    def clearContentArea(self): # Wipe out everything except the header
+        for child in self.contentArea.findChildren(QWidget):
+            child.setParent(None)
+            child.deleteLater()
 
 
 def main():
