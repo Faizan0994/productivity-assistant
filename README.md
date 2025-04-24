@@ -6,8 +6,23 @@ A productivity app that tracks app usage and allows you to set limits
 - Chossing apps to block
 - Blocking apps on certain days
 - Blocking apps after reaching daily limit
-- Blocking apps after certain sessions
 - Blocking permenantly
 - Daily reports
 - Ignore lists
 - Reminding of the usage time
+- Stopping the app
+
+## Postponed
+- session blocking
+- visit blocking
+- Welcome screen on first launch
+
+## Dependencies
+- PyQt5
+- pyqtgraph
+- psutil
+- pytz
+- win32gui
+- win32process
+- tzlocal
+- win32api
