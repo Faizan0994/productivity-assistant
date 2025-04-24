@@ -16,3 +16,7 @@ A productivity app that tracks app usage and allows you to set limits
 - session blocking
 - visit blocking
 - Welcome screen on first launch
+
+## Dependencies
+-PyQt5
+-pyqtgraph
