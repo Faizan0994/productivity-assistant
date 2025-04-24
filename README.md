@@ -20,3 +20,9 @@ A productivity app that tracks app usage and allows you to set limits
 ## Dependencies
 - PyQt5
 - pyqtgraph
+- psutil
+- pytz
+- win32gui
+- win32process
+- tzlocal
+- win32api
