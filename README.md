@@ -18,5 +18,5 @@ A productivity app that tracks app usage and allows you to set limits
 - Welcome screen on first launch
 
 ## Dependencies
--PyQt5
--pyqtgraph
+- PyQt5
+- pyqtgraph
