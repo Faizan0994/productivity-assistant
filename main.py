@@ -1,6 +1,5 @@
 from backend_modules.process    import program, foreground_process
 from backend_modules.database   import update_endtime, add_current
-import backend_modules.database as database
 
 from time       import sleep
 
@@ -32,16 +31,4 @@ def assistant (prevApp: program):
 
 
 # main function execution 
-# assistant (app)
-
-from backend_modules.database import cordinates, programs_in_duration
-from backend_modules.calc_time import x_points
-from datetime import datetime
-
-print ("Intervals:")
-points = x_points (datetime (2025, 4, 19, 10, 0, 0), datetime (2025, 4, 22, 12, 0, 0))
-for i in points:
-    print (i)
-print ()
-
-programs_in_duration ()
+assistant (app)
