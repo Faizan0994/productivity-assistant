@@ -169,7 +169,7 @@ def interval_time (start: str = "", end: str = "", name: str = "") -> list:
     
     return timeSpent
 
-def programs_in_duration (start: str = "", end: str = "") -> list:
+def programs_in_duration (start: str, end: str) -> list:
     """
     Returns list of programs that have been runed
     from start time to end time
