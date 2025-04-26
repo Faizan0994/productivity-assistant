@@ -35,7 +35,9 @@ def set_database (path, name):
 # global variables
 userName = GetUserName ()
 databaseName = "data.db"
-databasePath = join (expanduser ("~"), PureWindowsPath ("AppData", "Local", "Productivity Assistant"))
+# databasePath = join (expanduser ("~"), PureWindowsPath ("AppData", "Local", "Productivity Assistant"))
+# temporary data ...
+databasePath = PureWindowsPath ("Test Data")
 freshDownload = not isdir (databasePath)
 
 if freshDownload:
@@ -84,10 +86,6 @@ def update_endtime (index: int, endTime: str) -> int:
                          """, [endTime, index])
     database.commit ()
 
-    # uncomment it to display results...
-    # for i in cursordb.execute ("SELECT * FROM time_stamps WHERE id = ?", [index]):
-    #       print (i)
-
 def in_program_list (name: str) -> bool:
     """
     Checks for the number of times the name appears 
@@ -114,7 +112,7 @@ def cordinates (timerange: list, name: str = ""):
     if len(timerange) >= 3:
         timerange = [t.isoformat () for t in timerange]
         for startTime, endTime in zip (timerange[0:-1], timerange[1::]):
-            intervals = interval_time (start = startTime, end = endTime, name = name)
+            intervals = time_spent (start = startTime, end = endTime, name = name)
             points.append ((endTime, intervals))
     else:
         class ArrayLength (Exception):
@@ -129,7 +127,7 @@ def cordinates (timerange: list, name: str = ""):
         print (entry[0], entry[1].total_seconds ())
 
 
-def interval_time (start: str = "", end: str = "", name: str = "") -> timedelta:
+def time_spent (start: str = "", end: str = "", name: str = "") -> timedelta:
     """
     Returns the time intervals between start and end
     if  empty  strings  are passed, it  returns  the 
@@ -189,7 +187,7 @@ def programs_in_duration (start: str = "", end: str = "") -> list:
 def execution (start:str = "", end: str = "") -> tuple:
     """
     This is a common function that is used by programs 
-    in  duration  and  interval  time.  This  function 
+    in   duration   and  time_spent.   This   function 
     converts  start and end  to utc format, hence  YOU 
     DONT NEED TO CONVERT WHERE IT IS CALLED.
     """
@@ -220,3 +218,12 @@ def execution (start:str = "", end: str = "") -> tuple:
 # temporary database, use it for debugging ...
 # database = sqlite3.connect (PureWindowsPath ("test_data", "data.db"))
 # cursordb = database.cursor ()
+
+def app_usage (start: str = "", end: str = ""):
+    apps = programs_in_duration (start, end)
+    appUsage = []
+
+    for app in apps:
+        appUsage.append ((app, time_spent (start, end, app)))
+    
+    return appUsage
