@@ -129,7 +129,7 @@ def cordinates (timerange: list, name: str = ""):
         print (entry[0], entry[1].total_seconds ())
 
 
-def interval_time (start: str = "", end: str = "", name: str = "") -> list:
+def interval_time (start, end: str, name: str = "") -> timedelta:
     """
     Returns the time intervals between start and end
     if  empty  strings  are passed, it  returns  the 
