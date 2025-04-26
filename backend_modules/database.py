@@ -151,25 +151,28 @@ def time_spent (start: str = "", end: str = "", name: str = "") -> timedelta:
     intervals = cursordb.execute (sql, parameters)
     timeSpent = timedelta (0)
     
+    # which would be more optimal?
     if not (start == "" and end == ""):
         start = datetime.fromisoformat (start)
         end = datetime.fromisoformat (end)
 
-    for interval in intervals:
-        startOfInterval = datetime.fromisoformat (interval[0])
-        endOfInterval = datetime.fromisoformat (interval[1])
-        
-        if start == "" and end == "":
-            start = startOfInterval
-            end = endOfInterval
+        for interval in intervals:
+            startOfInterval = datetime.fromisoformat (interval[0])
+            endOfInterval = datetime.fromisoformat (interval[1])
 
-        if startOfInterval < start and endOfInterval > end:
-            timeSpent += end - start
-        elif startOfInterval <= start and endOfInterval > start:
-            timeSpent += endOfInterval - start
-        elif endOfInterval >= end and startOfInterval < end:
-            timeSpent += end - startOfInterval
-        else:
+            if startOfInterval < start and endOfInterval > end:
+                timeSpent += end - start
+            elif startOfInterval <= start and endOfInterval > start:
+                timeSpent += endOfInterval - start
+            elif endOfInterval >= end and startOfInterval < end:
+                timeSpent += end - startOfInterval
+            else:
+                timeSpent += endOfInterval - startOfInterval
+    else:
+        for interval in intervals:
+            startOfInterval = datetime.fromisoformat (interval[0])
+            endOfInterval = datetime.fromisoformat (interval[1])
+            
             timeSpent += endOfInterval - startOfInterval
     
     return timeSpent
