@@ -149,19 +149,25 @@ def time_spent (start: str = "", end: str = "", name: str = "") -> timedelta:
     sql =   f"SELECT start, end FROM ({sql})"
 
     intervals = cursordb.execute (sql, parameters)
-    start = datetime.fromisoformat (start)
-    end = datetime.fromisoformat (end)
     timeSpent = timedelta (0)
+    
+    if not (start == "" and end == ""):
+        start = datetime.fromisoformat (start)
+        end = datetime.fromisoformat (end)
 
     for interval in intervals:
         startOfInterval = datetime.fromisoformat (interval[0])
         endOfInterval = datetime.fromisoformat (interval[1])
         
+        if start == "" and end == "":
+            start = startOfInterval
+            end = endOfInterval
+
         if startOfInterval < start and endOfInterval > end:
             timeSpent += end - start
-        elif startOfInterval < start and endOfInterval > start:
+        elif startOfInterval <= start and endOfInterval > start:
             timeSpent += endOfInterval - start
-        elif endOfInterval > end and startOfInterval < end:
+        elif endOfInterval >= end and startOfInterval < end:
             timeSpent += end - startOfInterval
         else:
             timeSpent += endOfInterval - startOfInterval
@@ -220,6 +226,10 @@ def execution (start:str = "", end: str = "") -> tuple:
 # cursordb = database.cursor ()
 
 def app_usage (start: str = "", end: str = ""):
+    """
+    returns the list of app, time spent tuple
+    """
+    
     apps = programs_in_duration (start, end)
     appUsage = []
 
@@ -227,3 +237,10 @@ def app_usage (start: str = "", end: str = ""):
         appUsage.append ((app, time_spent (start, end, app)))
     
     return appUsage
+
+def most_used_app (start: str = "", end: str = ""):
+    """
+    returns  the most used  app within the  given
+    duration
+    """
+    return max (app_usage (start, end), key = lambda appTuple: appTuple[1])
