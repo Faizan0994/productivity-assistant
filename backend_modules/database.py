@@ -129,12 +129,13 @@ def cordinates (timerange: list, name: str = ""):
         print (entry[0], entry[1].total_seconds ())
 
 
-def interval_time (start, end: str, name: str = "") -> timedelta:
+def interval_time (start: str = "", end: str = "", name: str = "") -> timedelta:
     """
     Returns the time intervals between start and end
     if  empty  strings  are passed, it  returns  the 
     total  time  spent  the  name  will  filter  the 
-    intervals by application.
+    intervals by application.  Returns timedelta (0)
+    when none is given.
     """
 
     executionTuple = execution (start, end)
@@ -169,16 +170,18 @@ def interval_time (start, end: str, name: str = "") -> timedelta:
     
     return timeSpent
 
-def programs_in_duration (start: str, end: str) -> list:
+def programs_in_duration (start: str = "", end: str = "") -> list:
     """
     Returns list of programs that have been runed
-    from start time to end time
+    from start time to end time. Returns an empty
+    list if there is no program.
     """
 
     executionTuple = execution (start, end)
     sql = executionTuple[0]
     paramaters = executionTuple[1]
     del (executionTuple)
+
     sql = f"SELECT DISTINCT (name) FROM ({sql})"
     programs = [app[0] for app in cursordb.execute (sql, paramaters)]
     return programs
@@ -206,6 +209,9 @@ def execution (start:str = "", end: str = "") -> tuple:
         sql =   f"SELECT * FROM ({sql})\
                 WHERE DATETIME (end) <= ?\
                 OR (DATETIME (end) > ? AND DATETIME (start) < ?)"
+        
+        # if start only start is specified or end is specified ...
+        # add it later ...
         
         parameters.extend ([start, start, start, end, end, end])
     
