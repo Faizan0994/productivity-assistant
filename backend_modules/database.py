@@ -236,11 +236,11 @@ def app_usage (start: str = "", end: str = ""):
     for app in apps:
         appUsage.append ((app, time_spent (start, end, app)))
     
-    return sorted (appUsage, key = lambda appTuple: appTuple [1])
+    return sorted (appUsage, key = lambda appTuple: appTuple [1], reverse = True)
 
 def most_used_app (start: str = "", end: str = ""):
     """
     returns  the most used  app within the  given
     duration
     """
-    return app_usage (start, end) [-1]
+    return app_usage (start, end) [0]
