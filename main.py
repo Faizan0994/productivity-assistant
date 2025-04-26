@@ -34,14 +34,19 @@ def assistant (prevApp: program):
 # main function execution 
 # assistant (app)
 
-from backend_modules.database import cordinates, programs_in_duration
-from backend_modules.calc_time import x_points
+from backend_modules.database import cordinates, programs_in_duration, time_spent, app_usage, most_used_app
+from backend_modules.calc_time import x_points, current_time
 from datetime import datetime
+from datetime import timedelta
 
-print ("Intervals:")
-points = x_points (datetime (2025, 4, 19, 10, 0, 0), datetime (2025, 4, 22, 12, 0, 0))
-for i in points:
-    print (i)
-print ()
+# print ("Intervals:")
+now = current_time ()
+startTime = now - timedelta (weeks=1)
+# startTime = now + timedelta (weeks=1)
 
-programs_in_duration ()
+# points = x_points (startTime, now)
+# for i in points:
+#     print (i)
+# print ()
+
+print (most_used_app ())
