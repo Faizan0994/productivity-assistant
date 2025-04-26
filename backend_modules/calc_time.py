@@ -56,4 +56,4 @@ def x_points (start: datetime, end: datetime) -> list:
                 super().__init__(message)
             def __str__ (self):
                 return self.message
-        raise SmallInterval ("The interval is small")
+        raise SmallInterval (f"The interval is small: {difference}")
