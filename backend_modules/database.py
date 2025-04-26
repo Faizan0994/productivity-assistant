@@ -129,7 +129,7 @@ def cordinates (timerange: list, name: str = ""):
         print (entry[0], entry[1].total_seconds ())
 
 
-def interval_time (start: str = "", end: str = "", name: str = "") -> list:
+def interval_time (start, end: str, name: str = "") -> timedelta:
     """
     Returns the time intervals between start and end
     if  empty  strings  are passed, it  returns  the 
@@ -169,7 +169,7 @@ def interval_time (start: str = "", end: str = "", name: str = "") -> list:
     
     return timeSpent
 
-def programs_in_duration (start: str = "", end: str = "") -> list:
+def programs_in_duration (start: str, end: str) -> list:
     """
     Returns list of programs that have been runed
     from start time to end time
@@ -183,7 +183,7 @@ def programs_in_duration (start: str = "", end: str = "") -> list:
     programs = [app[0] for app in cursordb.execute (sql, paramaters)]
     return programs
 
-def execution (start:str, end: str) -> tuple:
+def execution (start:str = "", end: str = "") -> tuple:
     """
     This is a common function that is used by programs 
     in  duration  and  interval  time.  This  function 
@@ -191,15 +191,15 @@ def execution (start:str, end: str) -> tuple:
     DONT NEED TO CONVERT WHERE IT IS CALLED.
     """
 
-    start = to_utc (datetime.fromisoformat (start)).isoformat ()
-    end = to_utc (datetime.fromisoformat (end)).isoformat ()
-
     sql =   "SELECT name, start, end FROM time_stamps\
             LEFT JOIN programs ON programs.id = time_stamps.program_id\
             WHERE end IS NOT NULL"
     parameters = []
     
     if not (start == "" and end == ""):
+        start = to_utc (datetime.fromisoformat (start)).isoformat ()
+        end = to_utc (datetime.fromisoformat (end)).isoformat ()
+        
         sql =   f"SELECT * FROM ({sql})\
                 WHERE DATETIME (start) > DATETIME (?)\
                 OR (DATETIME (start) < ? AND DATETIME (end) > ?)"
