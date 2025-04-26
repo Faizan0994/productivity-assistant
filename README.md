@@ -26,7 +26,5 @@ A productivity app that tracks app usage and allows you to set limits
 - pyqtgraph
 - psutil
 - pytz
-- win32gui
-- win32process
+- pywin32
 - tzlocal
-- win32api
