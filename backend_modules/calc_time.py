@@ -58,6 +58,13 @@ def x_points (start: datetime, end: datetime) -> list:
                 return self.message
         raise SmallInterval (f"The interval is small: {difference}")
     
+def weekdays (datetimeObj: datetime):
+    weekdaysName = ["Monday", "Tuesday", "Wednessday", "Thursday", "Friday", "Saturday", "Sunday"]
+    return weekdaysName[datetimeObj.weekday ()]
+
+def total_hours (timedeltaObj: timedelta):
+    return timedeltaObj.total_seconds () / 3600
+
 def convert_seconds(seconds):
     hours = seconds // 3600
     seconds %= 3600
