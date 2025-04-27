@@ -207,9 +207,9 @@ class MainWindow(QMainWindow):
         xAxis = self.graph.getAxis('bottom')
         yAxis = self.graph.getAxis('left')
         xAxis.setTextPen(QPen(QColor(self.mutedColor)))
-        xAxis.setTickFont(QFont("inter", 10))
+        xAxis.setTickFont(QFont("inter", int(0.8*self.vw)))
         yAxis.setTextPen(QPen(QColor(self.mutedColor)))
-        yAxis.setTickFont(QFont("inter", 10))
+        yAxis.setTickFont(QFont("inter", int(0.8*self.vw)))
         self.graph.setLabel("left", "Hours", **graphStyles) # Dictionary unpacking operator is necessary
 
         # App info Section
