@@ -41,7 +41,8 @@ from datetime import timedelta
 
 # print ("Intervals:")
 now = current_time ()
-startTime = now - timedelta (weeks=1)
+startTime = (now - timedelta (weeks=1)).isoformat ()
+now = now.isoformat ()
 # startTime = now + timedelta (weeks=1)
 
 # points = x_points (startTime, now)
@@ -49,4 +50,4 @@ startTime = now - timedelta (weeks=1)
 #     print (i)
 # print ()
 
-print (most_used_app ())
+print (app_usage (startTime, now))

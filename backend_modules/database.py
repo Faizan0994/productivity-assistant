@@ -153,8 +153,8 @@ def time_spent (start: str = "", end: str = "", name: str = "") -> timedelta:
     
     # which would be more optimal?
     if not (start == "" and end == ""):
-        start = datetime.fromisoformat (start)
-        end = datetime.fromisoformat (end)
+        start = to_utc (datetime.fromisoformat (start))
+        end = to_utc (datetime.fromisoformat (end))
 
         for interval in intervals:
             startOfInterval = datetime.fromisoformat (interval[0])
