@@ -246,4 +246,9 @@ def most_used_app (start: str = "", end: str = ""):
     returns  the most used  app within the  given
     duration
     """
-    return app_usage (start, end) [0]
+    appUsage = app_usage (start, end)
+
+    if not appUsage == []:
+        return appUsage [0]
+    else:
+        return appUsage
