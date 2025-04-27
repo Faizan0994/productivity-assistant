@@ -173,7 +173,7 @@ class MainWindow(QMainWindow):
         thisWeekLayout.addWidget(self.lastWeekRef)
         self.thisWeekCard.setLayout(thisWeekLayout)
 
-        self.mostUsedText = QLabel("Most Used", self.mostUsedAppCard)
+        self.mostUsedText = QLabel("Most Used App", self.mostUsedAppCard)
         self.mostUsedAppName = QLabel(mostUsedApp, self.mostUsedAppCard)
         mostUsedAppLayout.addWidget(self.mostUsedText, 1)
         mostUsedAppLayout.addWidget(self.mostUsedAppName, 2)
