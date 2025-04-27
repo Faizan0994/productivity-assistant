@@ -35,7 +35,9 @@ def set_database (path, name):
 # global variables
 userName = GetUserName ()
 databaseName = "data.db"
-databasePath = join (expanduser ("~"), PureWindowsPath ("AppData", "Local", "Productivity Assistant"))
+# databasePath = join (expanduser ("~"), PureWindowsPath ("AppData", "Local", "Productivity Assistant"))
+# temporary data ...
+databasePath = PureWindowsPath ("Test Data")
 freshDownload = not isdir (databasePath)
 
 if freshDownload:
@@ -84,10 +86,6 @@ def update_endtime (index: int, endTime: str) -> int:
                          """, [endTime, index])
     database.commit ()
 
-    # uncomment it to display results...
-    # for i in cursordb.execute ("SELECT * FROM time_stamps WHERE id = ?", [index]):
-    #       print (i)
-
 def in_program_list (name: str) -> bool:
     """
     Checks for the number of times the name appears 
@@ -114,7 +112,7 @@ def cordinates (timerange: list, name: str = ""):
     if len(timerange) >= 3:
         timerange = [t.isoformat () for t in timerange]
         for startTime, endTime in zip (timerange[0:-1], timerange[1::]):
-            intervals = interval_time (start = startTime, end = endTime, name = name)
+            intervals = time_spent (start = startTime, end = endTime, name = name)
             points.append ((endTime, intervals))
     else:
         class ArrayLength (Exception):
@@ -129,12 +127,13 @@ def cordinates (timerange: list, name: str = ""):
         print (entry[0], entry[1].total_seconds ())
 
 
-def interval_time (start: str = "", end: str = "", name: str = "") -> list:
+def time_spent (start: str = "", end: str = "", name: str = "") -> timedelta:
     """
     Returns the time intervals between start and end
     if  empty  strings  are passed, it  returns  the 
     total  time  spent  the  name  will  filter  the 
-    intervals by application.
+    intervals by application.  Returns timedelta (0)
+    when none is given.
     """
 
     executionTuple = execution (start, end)
@@ -150,49 +149,54 @@ def interval_time (start: str = "", end: str = "", name: str = "") -> list:
     sql =   f"SELECT start, end FROM ({sql})"
 
     intervals = cursordb.execute (sql, parameters)
-    start = datetime.fromisoformat (start)
-    end = datetime.fromisoformat (end)
     timeSpent = timedelta (0)
+    
+    if not (start == "" and end == ""):
+        start = datetime.fromisoformat (start)
+        end = datetime.fromisoformat (end)
 
     for interval in intervals:
         startOfInterval = datetime.fromisoformat (interval[0])
         endOfInterval = datetime.fromisoformat (interval[1])
         
+        if start == "" and end == "":
+            start = startOfInterval
+            end = endOfInterval
+
         if startOfInterval < start and endOfInterval > end:
             timeSpent += end - start
-        elif startOfInterval < start and endOfInterval > start:
+        elif startOfInterval <= start and endOfInterval > start:
             timeSpent += endOfInterval - start
-        elif endOfInterval > end and startOfInterval < end:
+        elif endOfInterval >= end and startOfInterval < end:
             timeSpent += end - startOfInterval
         else:
             timeSpent += endOfInterval - startOfInterval
     
     return timeSpent
 
-def programs_in_duration (start: str, end: str) -> list:
+def programs_in_duration (start: str = "", end: str = "") -> list:
     """
     Returns list of programs that have been runed
-    from start time to end time
+    from start time to end time. Returns an empty
+    list if there is no program.
     """
 
     executionTuple = execution (start, end)
     sql = executionTuple[0]
     paramaters = executionTuple[1]
     del (executionTuple)
+
     sql = f"SELECT DISTINCT (name) FROM ({sql})"
     programs = [app[0] for app in cursordb.execute (sql, paramaters)]
     return programs
 
-def execution (start:str, end: str) -> tuple:
+def execution (start:str = "", end: str = "") -> tuple:
     """
     This is a common function that is used by programs 
-    in  duration  and  interval  time.  This  function 
+    in   duration   and  time_spent.   This   function 
     converts  start and end  to utc format, hence  YOU 
     DONT NEED TO CONVERT WHERE IT IS CALLED.
     """
-
-    start = to_utc (datetime.fromisoformat (start)).isoformat ()
-    end = to_utc (datetime.fromisoformat (end)).isoformat ()
 
     sql =   "SELECT name, start, end FROM time_stamps\
             LEFT JOIN programs ON programs.id = time_stamps.program_id\
@@ -200,12 +204,18 @@ def execution (start:str, end: str) -> tuple:
     parameters = []
     
     if not (start == "" and end == ""):
+        start = to_utc (datetime.fromisoformat (start)).isoformat ()
+        end = to_utc (datetime.fromisoformat (end)).isoformat ()
+        
         sql =   f"SELECT * FROM ({sql})\
                 WHERE DATETIME (start) > DATETIME (?)\
                 OR (DATETIME (start) < ? AND DATETIME (end) > ?)"
         sql =   f"SELECT * FROM ({sql})\
                 WHERE DATETIME (end) <= ?\
                 OR (DATETIME (end) > ? AND DATETIME (start) < ?)"
+        
+        # if start only start is specified or end is specified ...
+        # add it later ...
         
         parameters.extend ([start, start, start, end, end, end])
     
@@ -214,3 +224,23 @@ def execution (start:str, end: str) -> tuple:
 # temporary database, use it for debugging ...
 # database = sqlite3.connect (PureWindowsPath ("test_data", "data.db"))
 # cursordb = database.cursor ()
+
+def app_usage (start: str = "", end: str = ""):
+    """
+    returns the list of app, time spent tuple
+    """
+    
+    apps = programs_in_duration (start, end)
+    appUsage = []
+
+    for app in apps:
+        appUsage.append ((app, time_spent (start, end, app)))
+    
+    return sorted (appUsage, key = lambda appTuple: appTuple [1], reverse = True)
+
+def most_used_app (start: str = "", end: str = ""):
+    """
+    returns  the most used  app within the  given
+    duration
+    """
+    return app_usage (start, end) [0]

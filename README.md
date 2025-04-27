@@ -1,7 +1,9 @@
 # Productivity Assistant
+
 A productivity app that tracks app usage and allows you to set limits
 
 ## Goals
+
 - Display the time spent on each app
 - Chossing apps to block
 - Blocking apps on certain days
@@ -13,16 +15,16 @@ A productivity app that tracks app usage and allows you to set limits
 - Stopping the app
 
 ## Postponed
+
 - session blocking
 - visit blocking
 - Welcome screen on first launch
 
 ## Dependencies
+
 - PyQt5
 - pyqtgraph
 - psutil
 - pytz
-- win32gui
-- win32process
+- pywin32
 - tzlocal
-- win32api
