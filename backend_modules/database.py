@@ -27,6 +27,11 @@ def set_database (path, name):
                             end TEXT,
                             FOREIGN KEY (program_id) REFERENCES programs (id));
                              
+                            CREATE TABLE daily_limits
+                            (program_id INTIGER NOT NULL,
+                            limits INTIGER NOT NULL,
+                            FOREIGN KEY (program_id) REFERENCES programs (id));
+                             
                             CREATE UNIQUE INDEX program_name ON programs (name);
                             
                             COMMIT;
@@ -35,9 +40,9 @@ def set_database (path, name):
 # global variables
 userName = GetUserName ()
 databaseName = "data.db"
-# databasePath = join (expanduser ("~"), PureWindowsPath ("AppData", "Local", "Productivity Assistant"))
+databasePath = join (expanduser ("~"), PureWindowsPath ("AppData", "Local", "Productivity Assistant"))
 # temporary data ...
-databasePath = PureWindowsPath ("Test Data")
+# databasePath = PureWindowsPath ("Test Data")
 freshDownload = not isdir (databasePath)
 
 if freshDownload:
@@ -249,3 +254,15 @@ def most_used_app (start: str = "", end: str = ""):
         return appUsage [0]
     else:
         return appUsage
+    
+def add_daily_limit (t: int, program: str):
+    pid = [app[0] for app in cursordb.execute ("""SELECT id FROM programs 
+                                               WHERE name = ?
+                                               """, [program])] [0]
+    
+    cursordb.execute ("""
+                      INSERT INTO daily_limits
+                      VALUES (?, ?)
+                      """, [pid, t])
+    
+    database.commit ()
