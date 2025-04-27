@@ -101,7 +101,7 @@ def in_program_list (name: str) -> bool:
     else:
          return True
 
-def cordinates (timerange: list, name: str = ""):
+def cordinates (timerange: list, name: str = "") -> list:
     """
     Returns a list of touples of time stamp displayed on x-axis 
     and the time spent in each duration
@@ -110,9 +110,8 @@ def cordinates (timerange: list, name: str = ""):
     points = []
     
     if len(timerange) >= 3:
-        timerange = [t.isoformat () for t in timerange]
         for startTime, endTime in zip (timerange[0:-1], timerange[1::]):
-            intervals = time_spent (start = startTime, end = endTime, name = name)
+            intervals = time_spent (start = to_utc (startTime).isoformat (), end = to_utc (endTime).isoformat (), name = name)
             points.append ((endTime, intervals))
     else:
         class ArrayLength (Exception):
@@ -123,9 +122,7 @@ def cordinates (timerange: list, name: str = ""):
                 return self.message
         raise ArrayLength ("The length of list is too small")
 
-    for entry in points:
-        print (entry[0], entry[1].total_seconds ())
-
+    return points
 
 def time_spent (start: str = "", end: str = "", name: str = "") -> timedelta:
     """
