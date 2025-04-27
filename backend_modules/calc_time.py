@@ -57,3 +57,7 @@ def x_points (start: datetime, end: datetime) -> list:
             def __str__ (self):
                 return self.message
         raise SmallInterval (f"The interval is small: {difference}")
+    
+def weekdays (datetimeObj: datetime):
+    weekdaysName = ["Monday", "Tuesday", "Wednessday", "Thursday", "Friday", "Saturday", "Sunday"]
+    return weekdaysName[datetimeObj.weekday ()]
