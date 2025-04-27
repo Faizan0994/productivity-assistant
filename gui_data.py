@@ -8,7 +8,8 @@ currentTime = to_utc(current_time()).isoformat()
 startOfWeek = to_utc(current_time() - timedelta(weeks=1)).isoformat()
 startOfLastWeek = to_utc(current_time() - timedelta(weeks=2)).isoformat()
 
-# mostUsedApp = most_used_app(midnight, currentTime)[0] # first element is the name of the app
+# donsn't consider []
+mostUsedApp = most_used_app(midnight, currentTime) [0] # first element is the name of the app
 # calculate screen time
 timeSpentSeconds = int(time_spent(midnight, currentTime).total_seconds())
 timeSpent = convert_seconds(timeSpentSeconds)
