@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHB
 from PyQt5.QtGui import QGuiApplication, QFontDatabase, QFont, QPen, QColor
 from PyQt5.QtCore import Qt
 from gui_library import SmartScrollArea, FixedAxis, CustomGridViewBox, LineDrawer
+from gui_data import *
 
 class MainWindow(QMainWindow):
     # This will be changed later
@@ -157,23 +158,23 @@ class MainWindow(QMainWindow):
 
         # Cards
         self.todayText = QLabel("Today", self.todayCard)
-        self.todayUsage = QLabel("8h 20m 03s", self.todayCard)
-        self.lastDayRef = QLabel("6h more than yesterday")
+        self.todayUsage = QLabel(screenTimeToday, self.todayCard)
+        self.lastDayRef = QLabel(lastDayComparisonString, self.todayCard)
         todayLayout.addWidget(self.todayText)
         todayLayout.addWidget(self.todayUsage)
         todayLayout.addWidget(self.lastDayRef)
         self.todayCard.setLayout(todayLayout)
 
         self.thisWeekText = QLabel("This week", self.thisWeekCard)
-        self.thisWeekUsage = QLabel("56h 31m 40s", self.thisWeekCard)
-        self.lastWeekRef = QLabel("1h less than last week", self.thisWeekCard)
+        self.thisWeekUsage = QLabel(screenTimeThisWeek, self.thisWeekCard)
+        self.lastWeekRef = QLabel(lastWeekComparisonString, self.thisWeekCard)
         thisWeekLayout.addWidget(self.thisWeekText)
         thisWeekLayout.addWidget(self.thisWeekUsage)
         thisWeekLayout.addWidget(self.lastWeekRef)
         self.thisWeekCard.setLayout(thisWeekLayout)
 
         self.mostUsedText = QLabel("Most Used", self.mostUsedAppCard)
-        self.mostUsedAppName = QLabel("Firefox", self.mostUsedAppCard)
+        self.mostUsedAppName = QLabel(mostUsedApp, self.mostUsedAppCard)
         mostUsedAppLayout.addWidget(self.mostUsedText, 1)
         mostUsedAppLayout.addWidget(self.mostUsedAppName, 2)
         mostUsedAppLayout.setSpacing(1*self.vw)
