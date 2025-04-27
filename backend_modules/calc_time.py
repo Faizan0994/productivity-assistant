@@ -57,3 +57,10 @@ def x_points (start: datetime, end: datetime) -> list:
             def __str__ (self):
                 return self.message
         raise SmallInterval (f"The interval is small: {difference}")
+    
+def convert_seconds(seconds):
+    hours = seconds // 3600
+    seconds %= 3600
+    minutes = seconds // 60
+    seconds %= 60
+    return (hours, minutes, seconds)
