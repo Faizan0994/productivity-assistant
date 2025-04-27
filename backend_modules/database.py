@@ -101,7 +101,7 @@ def in_program_list (name: str) -> bool:
     else:
          return True
 
-def cordinates (timerange: list, name: str = ""):
+def cordinates (timerange: list, name: str = "") -> list:
     """
     Returns a list of touples of time stamp displayed on x-axis 
     and the time spent in each duration
@@ -110,9 +110,8 @@ def cordinates (timerange: list, name: str = ""):
     points = []
     
     if len(timerange) >= 3:
-        timerange = [t.isoformat () for t in timerange]
         for startTime, endTime in zip (timerange[0:-1], timerange[1::]):
-            intervals = time_spent (start = startTime, end = endTime, name = name)
+            intervals = time_spent (start = to_utc (startTime).isoformat (), end = to_utc (endTime).isoformat (), name = name)
             points.append ((endTime, intervals))
     else:
         class ArrayLength (Exception):
@@ -123,9 +122,7 @@ def cordinates (timerange: list, name: str = ""):
                 return self.message
         raise ArrayLength ("The length of list is too small")
 
-    for entry in points:
-        print (entry[0], entry[1].total_seconds ())
-
+    return points
 
 def time_spent (start: str = "", end: str = "", name: str = "") -> timedelta:
     """
@@ -151,25 +148,28 @@ def time_spent (start: str = "", end: str = "", name: str = "") -> timedelta:
     intervals = cursordb.execute (sql, parameters)
     timeSpent = timedelta (0)
     
+    # which would be more optimal?
     if not (start == "" and end == ""):
-        start = datetime.fromisoformat (start)
-        end = datetime.fromisoformat (end)
+        start = to_utc (datetime.fromisoformat (start))
+        end = to_utc (datetime.fromisoformat (end))
 
-    for interval in intervals:
-        startOfInterval = datetime.fromisoformat (interval[0])
-        endOfInterval = datetime.fromisoformat (interval[1])
-        
-        if start == "" and end == "":
-            start = startOfInterval
-            end = endOfInterval
+        for interval in intervals:
+            startOfInterval = datetime.fromisoformat (interval[0])
+            endOfInterval = datetime.fromisoformat (interval[1])
 
-        if startOfInterval < start and endOfInterval > end:
-            timeSpent += end - start
-        elif startOfInterval <= start and endOfInterval > start:
-            timeSpent += endOfInterval - start
-        elif endOfInterval >= end and startOfInterval < end:
-            timeSpent += end - startOfInterval
-        else:
+            if startOfInterval < start and endOfInterval > end:
+                timeSpent += end - start
+            elif startOfInterval <= start and endOfInterval > start:
+                timeSpent += endOfInterval - start
+            elif endOfInterval >= end and startOfInterval < end:
+                timeSpent += end - startOfInterval
+            else:
+                timeSpent += endOfInterval - startOfInterval
+    else:
+        for interval in intervals:
+            startOfInterval = datetime.fromisoformat (interval[0])
+            endOfInterval = datetime.fromisoformat (interval[1])
+            
             timeSpent += endOfInterval - startOfInterval
     
     return timeSpent
@@ -243,4 +243,9 @@ def most_used_app (start: str = "", end: str = ""):
     returns  the most used  app within the  given
     duration
     """
-    return app_usage (start, end) [0]
+    appUsage = app_usage (start, end)
+
+    if not appUsage == []:
+        return appUsage [0]
+    else:
+        return appUsage
