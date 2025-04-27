@@ -145,7 +145,7 @@ class MainWindow(QMainWindow):
         self.graphSection = QWidget(self.contentArea)
         self.appInfoSection = QWidget(self.contentArea)
 
-        # Cars Section
+        # Cards Section
         self.todayCard = QWidget(self.cardsSection)
         self.thisWeekCard = QWidget(self.cardsSection)
         self.mostUsedAppCard = QWidget(self.cardsSection)
