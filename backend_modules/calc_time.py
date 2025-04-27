@@ -64,3 +64,10 @@ def weekdays (datetimeObj: datetime):
 
 def total_hours (timedeltaObj: timedelta):
     return timedeltaObj.total_seconds () / 3600
+
+def convert_seconds(seconds):
+    hours = seconds // 3600
+    seconds %= 3600
+    minutes = seconds // 60
+    seconds %= 60
+    return (hours, minutes, seconds)
