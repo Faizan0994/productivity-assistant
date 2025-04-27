@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from backend_modules.database import most_used_app, time_spent, cordinates
-from backend_modules.calc_time import current_time, to_utc, convert_seconds,  weekdays, x_points
+from backend_modules.calc_time import current_time, to_utc, convert_seconds, weekdays, x_points, total_hours
 
 midnight = to_utc(datetime.combine(datetime.today(), datetime.min.time())).isoformat()
 lastMidnight = to_utc(datetime.combine(datetime.today() - timedelta(days=1), datetime.min.time())).isoformat()
@@ -47,6 +47,8 @@ screenTimeThisWeek = f"{weeklyTimeSpent[0]}h {weeklyTimeSpent[1]}m {weeklyTimeSp
 
 now = current_time ()
 xPoints = x_points (now - timedelta (weeks = 1), now)
-xPoints = [weekdays (i[0]) for i in cordinates (xPoints)]
+axis = cordinates (xPoints)
+xPoints = [weekdays (point [0]) for point in axis]
+yPoints = [total_hours (point [1]) for point in axis]
 
-print (xPoints)
+print (yPoints)
