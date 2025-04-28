@@ -8,7 +8,6 @@ currentTime = to_utc(current_time()).isoformat()
 startOfWeek = to_utc(current_time() - timedelta(weeks=1)).isoformat()
 startOfLastWeek = to_utc(current_time() - timedelta(weeks=2)).isoformat()
 
-# donsn't consider []
 mostUsedApp = most_used_app(midnight, currentTime) [0] # first element is the name of the app
 # calculate screen time
 timeSpentSeconds = int(time_spent(midnight, currentTime).total_seconds())
@@ -51,5 +50,3 @@ xPoints = x_points (now - timedelta (weeks = 1), now)
 axis = cordinates (xPoints)
 xPoints = [weekdays (point [0]) for point in axis]
 yPoints = [total_hours (point [1]) for point in axis]
-
-print (yPoints)
