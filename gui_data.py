@@ -29,7 +29,7 @@ elif lastDayComparison < 0:
     lastDayComparison *= -1
     lastDayComparisonString = f"{lastDayComparison}h less than yesterday"
 else:
-    lastDayComparisonString = "same as yesterday"
+    lastDayComparisonString = "almost same as yesterday"
 # For comparison with previous week
 lastWeekComparisonString = ""
 if lastWeekComparison > 0:
@@ -38,7 +38,7 @@ elif lastWeekComparison < 0:
     lastWeekComparison *= -1
     lastWeekComparisonString = f"{lastWeekComparison}h less than last week"
 else:
-    lastWeekComparisonString = "same as last week"
+    lastWeekComparisonString = "almost same as last week"
 
 
 # Readable string format of time spent
