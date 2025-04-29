@@ -2,6 +2,7 @@ import sys
 import pyqtgraph as pg
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QLabel, QPushButton, QSizePolicy, QScrollArea
 from PyQt5.QtGui import QGuiApplication, QFontDatabase, QFont, QPen, QColor
+from PyQt5.QtSvg import QSvgWidget
 from PyQt5.QtCore import Qt
 from gui_library import SmartScrollArea, FixedAxis, CustomGridViewBox, LineDrawer
 from gui_data import *
@@ -140,7 +141,9 @@ class MainWindow(QMainWindow):
         thisWeekLayout = QVBoxLayout()
         mostUsedAppLayout = QVBoxLayout()
         graphLayout = QHBoxLayout()
-        appInfoLayout = QVBoxLayout()
+        appInfoHeadingLayout = QVBoxLayout()
+        self.appInfoDataLayout = QVBoxLayout()
+        self.appInfoLayout = QVBoxLayout()
         
         self.cardsSection = QWidget(self.contentArea)
         self.graphSection = QWidget(self.contentArea)
@@ -215,14 +218,18 @@ class MainWindow(QMainWindow):
 
         # App info Section
         self.appInfoHeader = QWidget(self.appInfoSection)
-        self.appInfoTitle = QLabel("App Usage", self.appInfoSection)
+        self.appInfoTitle = QLabel("App Usage", self.appInfoHeader)
         self.appInfoLine = LineDrawer(color = self.mutedColor, strokeWidth = int(0.2*self.vw), direction = "horizontal")
         self.appInfoLine.setMinimumWidth(200)
         self.appInfoLine.setMinimumHeight(int(0.2*self.vw))
-        appInfoLayout.addWidget(self.appInfoTitle)
-        appInfoLayout.addWidget(self.appInfoLine)
-        appInfoLayout.setContentsMargins(0,0,0,0)
-        self.appInfoSection.setLayout(appInfoLayout)
+        appInfoHeadingLayout.addWidget(self.appInfoTitle)
+        appInfoHeadingLayout.addWidget(self.appInfoLine)
+        appInfoHeadingLayout.setContentsMargins(0,0,0,0)
+        self.appInfoHeader.setLayout(appInfoHeadingLayout)
+        self.appInfoLayout.addWidget(self.appInfoHeader)
+        self.appInfoLayout.setSpacing(1*self.vw)
+        self.displayAppUsageInfo(appUsageList)
+        self.appInfoSection.setLayout(self.appInfoLayout)
 
         # Fixed size for cards and graph section
         self.cardsSection.setFixedHeight(12*self.vw)
@@ -302,6 +309,54 @@ class MainWindow(QMainWindow):
         self.scroller.setWidget(self.contentArea)
   
     
+
+    def displayAppUsageInfo(self, appUsageList): # Display the app usage info in the app info section
+        usageInfoLayout = QVBoxLayout()
+        usageInfoContainer = QWidget(self.appInfoSection)
+        for info in appUsageList:
+            appInfoLayout = QHBoxLayout()
+            cardLayout = QHBoxLayout()
+            card = QWidget(usageInfoContainer)
+            appInfo = QWidget(card)
+            appTitle = QLabel(info[0], appInfo)
+            appTitle.setAlignment(Qt.AlignVCenter)
+            appTime = QLabel(info[1], card)
+            appTime.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+            appIcon = QSvgWidget("./assets/app-icon.svg", appInfo)
+            appIcon.setFixedSize(int(3*self.vw), int(3*self.vw))
+            appIcon.setStyleSheet("color: black;")
+            appInfoLayout.addWidget(appIcon)
+            appInfoLayout.addWidget(appTitle)
+            appInfoLayout.setContentsMargins(0,0,0,0)
+            appInfo.setLayout(appInfoLayout)
+            cardLayout.addWidget(appInfo)
+            cardLayout.addWidget(appTime)
+            margin = int(0.5*self.vw)
+            cardLayout.setContentsMargins(margin*2, margin, margin*2, margin)
+            card.setLayout(cardLayout)
+            usageInfoLayout.addWidget(card)
+
+            card.setStyleSheet(f"""
+                                border: 1px solid {self.cardOutlineColor};
+                                background-color: {self.cardBgColor};
+                                border-radius: 8px;
+                            """)
+            appInfo.setStyleSheet(f"""
+                                border: none;
+                                border-radius: 0px;
+                                font-size: {int(1.6*self.vw)}px;
+                                """)
+            appTime.setStyleSheet(f"""
+                                border: none;
+                                border-radius: 0px;
+                                font-size: {int(1.4*self.vw)}px;
+                                font-weight: 500;
+                                """)
+        usageInfoLayout.setContentsMargins(0,0,0,0)
+        usageInfoLayout.setSpacing(int(0.8*self.vw))
+        usageInfoContainer.setLayout(usageInfoLayout)
+        self.appInfoLayout.addWidget(usageInfoContainer)
+
 
     def clearContentArea(self): # Wipe out everything except the header
         for child in self.contentArea.findChildren(QWidget):
