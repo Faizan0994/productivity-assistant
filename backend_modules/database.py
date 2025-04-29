@@ -40,9 +40,9 @@ def set_database (path, name):
 # global variables
 userName = GetUserName ()
 databaseName = "data.db"
-databasePath = join (expanduser ("~"), PureWindowsPath ("AppData", "Local", "Productivity Assistant"))
+# databasePath = join (expanduser ("~"), PureWindowsPath ("AppData", "Local", "Productivity Assistant"))
 # temporary data ...
-# databasePath = PureWindowsPath ("Test Data")
+databasePath = PureWindowsPath ("Test Data")
 freshDownload = not isdir (databasePath)
 
 if freshDownload:
@@ -116,8 +116,8 @@ def cordinates (timerange: list, name: str = "") -> list:
     
     if len(timerange) >= 3:
         for startTime, endTime in zip (timerange[0:-1], timerange[1::]):
-            intervals = time_spent (start = to_utc (startTime).isoformat (), end = to_utc (endTime).isoformat (), name = name)
-            points.append ((endTime, intervals))
+            intervals = time_spent (start = startTime.isoformat (), end = endTime.isoformat (), name = name)
+            points.append ((startTime, intervals))
     else:
         class ArrayLength (Exception):
             def __init__(self, message):

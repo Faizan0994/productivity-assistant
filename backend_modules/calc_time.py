@@ -39,14 +39,16 @@ def x_points (start: datetime, end: datetime) -> list:
         points = []
 
         if rows == 0:
-            itter = range (unitTime + 1)
+            itter = range (unitTime)
         else:
-            itter = range (11)
+            itter = range (10)
             decrement = decrement * rows 
         
         for n in itter:
-                points.append(end - (n * decrement))        
+                points.append (end - (n * decrement))        
         points.reverse ()
+
+        points.extend ([end + decrement])
 
         return points
     else:
