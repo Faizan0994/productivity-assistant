@@ -14,34 +14,40 @@ from shutil     import rmtree
 def set_database (path, name):
     database = sqlite3.connect (join (path, name))
     dbcur = database.cursor ()
-    dbcur.executescript     ("""
-                            BEGIN;
-                            CREATE TABLE programs 
-                            (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                            name TEXT NOT NULL);
-                             
-                            CREATE TABLE time_stamps 
-                            (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                            program_id INTEGER NOT NULL,
-                            start TEXT,
-                            end TEXT,
-                            FOREIGN KEY (program_id) REFERENCES programs (id));
-                             
-                            CREATE TABLE daily_limits
-                            (program_id INTIGER NOT NULL,
-                            limits INTIGER NOT NULL,
-                            FOREIGN KEY (program_id) REFERENCES programs (id));
-                             
-                            CREATE UNIQUE INDEX program_name ON programs (name);
-                            
-                            COMMIT;
-                            """)
+    dbcur.executescript ("""
+                         BEGIN;
+                         
+                         CREATE TABLE programs 
+                         (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                         name TEXT NOT NULL); 
+                         
+                         CREATE TABLE time_stamps 
+                         (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                         program_id INTEGER NOT NULL,
+                         start TEXT,
+                         end TEXT,
+                         FOREIGN KEY (program_id) REFERENCES programs (id)); 
+                         
+                         CREATE TABLE daily_limits
+                         (program_id INTIGER NOT NULL,
+                         limits INTIGER NOT NULL,
+                         FOREIGN KEY (program_id) REFERENCES programs (id)); 
+                         
+                         CREATE UNIQUE INDEX program_name 
+                         ON programs (name); 
+                         
+                         COMMIT;""")
     
 # global variables
 userName = GetUserName ()
 databaseName = "data.db"
+
 # databasePath = join (expanduser ("~"), PureWindowsPath ("AppData", "Local", "Productivity Assistant"))
 # temporary data ...
+# temporary database, use it for debugging ...
+# database = sqlite3.connect (PureWindowsPath ("test_data", "data.db"))
+# cursordb = database.cursor ()
+
 databasePath = PureWindowsPath ("Test Data")
 freshDownload = not isdir (databasePath)
 
@@ -62,33 +68,35 @@ cursordb = database.cursor ()
 
 def add_program (name: str):
     # inorder to auto increment use null
-    cursordb.execute    ("""
-                         INSERT INTO programs VALUES (NULL, ?)
-                         """, [name])
+    cursordb.execute ("""
+                      INSERT INTO programs 
+                      VALUES (NULL, ?)
+                      """, [name])
     database.commit ()
 
 # returns the process id in *our* database
 def pid (name: str) -> int:
-     return [entery[0] for entery in cursordb.execute   ("""
-                                                         SELECT id FROM programs WHERE name = ?
-                                                         """, [name])] [0]
+    return [entery[0] for entery in cursordb.execute ("""
+                                                      SELECT id FROM programs WHERE name = ?
+                                                      """, [name])] [0]
 
 def add_current (pid: int, sartTime: str) -> int:
-    cursordb.execute    ("""
-                        INSERT INTO time_stamps (program_id, start)
-                         VALUES (?, ?)
-                        """, [pid, sartTime])
+    cursordb.execute ("""
+                      INSERT INTO time_stamps 
+                      (program_id, start) VALUES (?, ?)
+                      """, [pid, sartTime])
     database.commit ()
-    entry_id = [entery[0] for entery in cursordb.execute    ("""
-                                                            SELECT * FROM time_stamps 
-                                                            ORDER BY id DESC
-                                                            """)] [0]
+    entry_id = [entery[0] for entery in cursordb.execute ("""
+                                                          SELECT * FROM time_stamps 
+                                                          ORDER BY id DESC
+                                                          """)] [0]
     return entry_id
 
 def update_endtime (index: int, endTime: str) -> int:
-    cursordb.execute    ("""
-                         UPDATE time_stamps SET end = ? WHERE id = ?
-                         """, [endTime, index])
+    cursordb.execute ("""
+                      UPDATE time_stamps 
+                      SET end = ? WHERE id = ?
+                      """, [endTime, index])
     database.commit ()
 
 def in_program_list (name: str) -> bool:
@@ -226,9 +234,6 @@ def execution (start:str = "", end: str = "") -> tuple:
     
     return (sql, parameters)
 
-# temporary database, use it for debugging ...
-# database = sqlite3.connect (PureWindowsPath ("test_data", "data.db"))
-# cursordb = database.cursor ()
 
 def app_usage (start: str = "", end: str = ""):
     """
