@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from backend_modules.database import most_used_app, time_spent, cordinates
+from backend_modules.database import most_used_app, time_spent, cordinates, app_usage
 from backend_modules.calc_time import current_time, to_utc, convert_seconds, weekdays, x_points, total_hours
 
 midnight = datetime.combine(datetime.today(), datetime.min.time()).isoformat()
@@ -50,3 +50,11 @@ xPoints = x_points (now - timedelta (weeks = 1), now)
 axis = cordinates (xPoints)
 xPoints = [weekdays (point [0]) for point in axis]
 yPoints = [total_hours (point [1]) for point in axis]
+
+# Apps used in the current week
+appUsageList = app_usage (startOfWeek, currentTime)
+appList = [data[0] for data in appUsageList]
+usageList = [int(data[1].total_seconds()) for data in appUsageList]
+usageData = [convert_seconds(data) for data in usageList]
+usageStrings = [f"{data[0]}h {data[1]}m {data[2]}s" for data in usageData]
+appUsageList = list(zip(appList, usageStrings))
