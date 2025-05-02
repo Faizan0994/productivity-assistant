@@ -51,13 +51,20 @@ class MainWindow(QMainWindow):
         self.title = QLabel("Dashboard", self.header)
         self.tabs = QWidget(self.header)
         self.dashboardButton = QPushButton("Dashboard", self.tabs)
+        self.dashboardButton.setCursor(Qt.PointingHandCursor)
         self.limitsTabButton = QPushButton("App Limits", self.tabs)
+        self.limitsTabButton.setCursor(Qt.PointingHandCursor)
         self.settingsButton = QPushButton("Settings", self.tabs)
+        self.settingsButton.setCursor(Qt.PointingHandCursor)
         self.contentArea = QWidget(centralWidget)
         self.contentArea.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
         self.contentArea.adjustSize()
         self.scroller = SmartScrollArea()
         self.scroller.setFrameShape(QScrollArea.NoFrame)
+
+        self.dashboardButton.clicked.connect(self.renderDashboard)
+        self.limitsTabButton.clicked.connect(self.renderLimitsTab)
+        self.settingsButton.clicked.connect(self.renderSettingsTab)
 
         self.title.setStyleSheet(f"""background-color: transparent;
                                      color: {self.textColor};
@@ -65,8 +72,7 @@ class MainWindow(QMainWindow):
                                      font-size: {int(3.4*self.vw)}px;
                                      font-weight: 500;
                                      """)
-
-        self.tabs.setStyleSheet(f"""
+        self.defaultTabButtonStyle = f"""
             QPushButton {{
                 background-color: transparent;
                 margin-top: {int(1.2*self.vw)}px;
@@ -83,7 +89,12 @@ class MainWindow(QMainWindow):
                 color: {self.accentColor};
                 border-color: {self.primaryColor};
             }}
-        """)
+        """
+        self.activeTabButtonStyle = f"""
+            color: {self.primaryColor};
+            border-color: {self.primaryColor};
+        """
+        self.tabs.setStyleSheet(self.defaultTabButtonStyle)
         self.scroller.setStyleSheet(f"""
             QScrollBar:vertical {{
                 background: {self.cardBgColor};
@@ -105,10 +116,7 @@ class MainWindow(QMainWindow):
                 background: none;
             }}
         """)
-        self.dashboardButton.setStyleSheet(f"""
-                                            color: {self.primaryColor};
-                                            border-color: {self.primaryColor};
-                                            """)
+        
 
         mainLayout = QVBoxLayout()
         mainLayout.addWidget(self.header, 1)
@@ -131,10 +139,26 @@ class MainWindow(QMainWindow):
         centralWidget.setLayout(mainLayout)
         self.setCentralWidget(centralWidget)
 
+        self.currentTab = ""
+        self.activeTabButton = None  # Track the currently active tab button
         self.renderDashboard()
 
 
+    def resetTabButtonStyles(self):
+        if self.activeTabButton:
+            self.activeTabButton.setStyleSheet(self.defaultTabButtonStyle)
+
+
     def renderDashboard(self):
+        # Cleaning up the content area and buttons
+        if self.currentTab == "dashboard":
+            return
+        self.resetTabButtonStyles()  # Reset the previous button's style
+        self.currentTab = "dashboard"
+        self.activeTabButton = self.dashboardButton  # Update the active button
+        self.dashboardButton.setStyleSheet(self.activeTabButtonStyle)
+        self.clearContentArea()
+
         dashboardLayout = QVBoxLayout()
         cardsLayout = QHBoxLayout()
         todayLayout = QVBoxLayout()
@@ -358,10 +382,32 @@ class MainWindow(QMainWindow):
         self.appInfoLayout.addWidget(usageInfoContainer)
 
 
+    def renderLimitsTab(self):
+        if self.currentTab == "limitsTab":
+            return
+        self.resetTabButtonStyles()
+        self.currentTab = "limitsTab"
+        self.activeTabButton = self.limitsTabButton
+        self.limitsTabButton.setStyleSheet(self.activeTabButtonStyle)
+        self.clearContentArea()
+
+
+    def renderSettingsTab(self):
+        if self.currentTab == "settingsTab":
+            return
+        self.resetTabButtonStyles()
+        self.currentTab = "settingsTab"
+        self.activeTabButton = self.settingsButton
+        self.settingsButton.setStyleSheet(self.activeTabButtonStyle)
+        self.clearContentArea()
+    
+    
     def clearContentArea(self): # Wipe out everything except the header
         for child in self.contentArea.findChildren(QWidget):
             child.setParent(None)
             child.deleteLater()
+        if self.contentArea.layout() is not None:
+            self.contentArea.layout().deleteLater()
 
 
 def main():
