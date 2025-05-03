@@ -1,6 +1,15 @@
 from datetime import datetime, timedelta
-from backend_modules.database import most_used_app, time_spent, cordinates, app_usage
-from backend_modules.calc_time import current_time, to_utc, convert_seconds, weekdays, x_points, total_hours
+from backend_modules.database import (most_used_app, 
+                                      time_spent, 
+                                      cordinates, 
+                                      app_usage)
+
+from backend_modules.calc_time import (current_time, 
+                                       to_utc, 
+                                       convert_seconds, 
+                                       weekdays, 
+                                       x_points, 
+                                       total_hours)
 
 midnight = datetime.combine(datetime.today(), datetime.min.time()).isoformat()
 lastMidnight = datetime.combine(datetime.today() - timedelta(days=1), datetime.min.time()).isoformat()
