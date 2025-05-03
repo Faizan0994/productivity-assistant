@@ -1,14 +1,24 @@
 from datetime import datetime, timedelta
-from backend_modules.database import most_used_app, time_spent, cordinates, app_usage
-from backend_modules.calc_time import current_time, to_utc, convert_seconds, weekdays, x_points, total_hours
+from backend_modules.database import (most_used_app, 
+                                      time_spent, 
+                                      cordinates, 
+                                      app_usage)
+from backend_modules.calc_time import (current_time, 
+                                       to_utc, 
+                                       convert_seconds, 
+                                       weekdays, 
+                                       x_points, 
+                                       total_hours)
 
 midnight = datetime.combine(datetime.today(), datetime.min.time()).isoformat()
 lastMidnight = datetime.combine(datetime.today() - timedelta(days=1), datetime.min.time()).isoformat()
 currentTime = current_time().isoformat()
 startOfWeek = (current_time() - timedelta(weeks=1)).isoformat()
 startOfLastWeek = (current_time() - timedelta(weeks=2)).isoformat()
-
-mostUsedApp = most_used_app(midnight, currentTime) [0] # first element is the name of the app
+try:
+    mostUsedApp = most_used_app(midnight, currentTime) [0] # first element is the name of the app
+except IndexError:
+    mostUsedApp = "--"
 # calculate screen time
 timeSpentSeconds = int(time_spent(midnight, currentTime).total_seconds())
 timeSpent = convert_seconds(timeSpentSeconds)
