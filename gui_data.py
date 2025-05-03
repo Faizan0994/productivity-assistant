@@ -7,8 +7,10 @@ lastMidnight = datetime.combine(datetime.today() - timedelta(days=1), datetime.m
 currentTime = current_time().isoformat()
 startOfWeek = (current_time() - timedelta(weeks=1)).isoformat()
 startOfLastWeek = (current_time() - timedelta(weeks=2)).isoformat()
-
-mostUsedApp = most_used_app(midnight, currentTime) [0] # first element is the name of the app
+try:
+    mostUsedApp = most_used_app(midnight, currentTime) [0] # first element is the name of the app
+except IndexError:
+    mostUsedApp = "--"
 # calculate screen time
 timeSpentSeconds = int(time_spent(midnight, currentTime).total_seconds())
 timeSpent = convert_seconds(timeSpentSeconds)
