@@ -244,7 +244,7 @@ def execution (start:str = "", end: str = "") -> tuple:
     return (sql, parameters)
 
 
-def app_usage (start: str = "", end: str = ""):
+def app_usage (start: str = "", end: str = "") -> list:
     """
     returns the list of app, time spent tuple
     """
@@ -257,7 +257,7 @@ def app_usage (start: str = "", end: str = ""):
     
     return sorted (appUsage, key = lambda appTuple: appTuple [1], reverse = True)
 
-def most_used_app (start: str = "", end: str = ""):
+def most_used_app (start: str = "", end: str = "") -> tuple:
     """
     returns  the most used  app within the  given
     duration
@@ -267,7 +267,7 @@ def most_used_app (start: str = "", end: str = ""):
     if not appUsage == []:
         return appUsage [0]
     else:
-        return appUsage
+        return ('--', timedelta (0))
     
 def add_daily_limit (process_id: int, t: int):
     cursordb.execute ("""
@@ -276,3 +276,4 @@ def add_daily_limit (process_id: int, t: int):
                       VALUES (?, ?)
                       """, [process_id, t])
     database.commit ()
+
