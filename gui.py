@@ -139,7 +139,6 @@ class MainWindow(QMainWindow):
         centralWidget.setLayout(mainLayout)
         self.setCentralWidget(centralWidget)
 
-        self.currentTab = ""
         self.activeTabButton = None  # Track the currently active tab button
         self.renderDashboard()
 
@@ -151,10 +150,7 @@ class MainWindow(QMainWindow):
 
     def renderDashboard(self):
         # Cleaning up the content area and buttons
-        if self.currentTab == "dashboard":
-            return
         self.resetTabButtonStyles()  # Reset the previous button's style
-        self.currentTab = "dashboard"
         self.activeTabButton = self.dashboardButton  # Update the active button
         self.dashboardButton.setStyleSheet(self.activeTabButtonStyle)
         self.clearContentArea()
@@ -383,20 +379,14 @@ class MainWindow(QMainWindow):
 
 
     def renderLimitsTab(self):
-        if self.currentTab == "limitsTab":
-            return
         self.resetTabButtonStyles()
-        self.currentTab = "limitsTab"
         self.activeTabButton = self.limitsTabButton
         self.limitsTabButton.setStyleSheet(self.activeTabButtonStyle)
         self.clearContentArea()
 
 
     def renderSettingsTab(self):
-        if self.currentTab == "settingsTab":
-            return
         self.resetTabButtonStyles()
-        self.currentTab = "settingsTab"
         self.activeTabButton = self.settingsButton
         self.settingsButton.setStyleSheet(self.activeTabButtonStyle)
         self.clearContentArea()
