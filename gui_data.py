@@ -3,7 +3,6 @@ from backend_modules.database import (most_used_app,
                                       time_spent, 
                                       cordinates, 
                                       app_usage)
-
 from backend_modules.calc_time import (current_time, 
                                        to_utc, 
                                        convert_seconds, 
