@@ -269,10 +269,10 @@ def most_used_app (start: str = "", end: str = ""):
     else:
         return appUsage
     
-def add_daily_limit (name: str, t: int):
+def add_daily_limit (process_id: int, t: int):
     cursordb.execute ("""
                       INSERT INTO daily_limits
                       (program_id, limits)
                       VALUES (?, ?)
-                      """, [pid (name), t])
+                      """, [process_id, t])
     database.commit ()
