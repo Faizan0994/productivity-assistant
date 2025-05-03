@@ -18,11 +18,11 @@ def set_database (path, name):
                          BEGIN;
                          
                          CREATE TABLE programs 
-                         (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                         (id INTEGER PRIMARY KEY,
                          name TEXT NOT NULL); 
                          
                          CREATE TABLE time_stamps 
-                         (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                         (id INTEGER PRIMARY KEY,
                          program_id INTEGER NOT NULL,
                          start TEXT,
                          end TEXT,
@@ -69,16 +69,26 @@ cursordb = database.cursor ()
 def add_program (name: str):
     # inorder to auto increment use null
     cursordb.execute ("""
-                      INSERT INTO programs 
-                      VALUES (NULL, ?)
+                      INSERT INTO programs (name)
+                      VALUES (?)
                       """, [name])
     database.commit ()
 
 # returns the process id in *our* database
 def pid (name: str) -> int:
-    return [entery[0] for entery in cursordb.execute ("""
-                                                      SELECT id FROM programs WHERE name = ?
-                                                      """, [name])] [0]
+    try:
+        return [entery[0] for entery in cursordb.execute ("""
+                                                          SELECT id FROM programs 
+                                                          WHERE name = ?
+                                                          """, [name])] [0]
+    except IndexError:
+        class ProgramNotFound (Exception):
+            def __init__(self, message):
+                self.message = message
+                super().__init__(message)
+            def __str__ (self):
+                return self.message
+        raise ProgramNotFound (f"Application not in database: {name}")
 
 def add_current (pid: int, sartTime: str) -> int:
     cursordb.execute ("""
@@ -86,11 +96,10 @@ def add_current (pid: int, sartTime: str) -> int:
                       (program_id, start) VALUES (?, ?)
                       """, [pid, sartTime])
     database.commit ()
-    entry_id = [entery[0] for entery in cursordb.execute ("""
+    return [entery[0] for entery in cursordb.execute ("""
                                                           SELECT * FROM time_stamps 
                                                           ORDER BY id DESC
                                                           """)] [0]
-    return entry_id
 
 def update_endtime (index: int, endTime: str) -> int:
     cursordb.execute ("""
@@ -260,14 +269,10 @@ def most_used_app (start: str = "", end: str = ""):
     else:
         return appUsage
     
-def add_daily_limit (t: int, program: str):
-    pid = [app[0] for app in cursordb.execute ("""SELECT id FROM programs 
-                                               WHERE name = ?
-                                               """, [program])] [0]
-    
+def add_daily_limit (name: str, t: int):
     cursordb.execute ("""
                       INSERT INTO daily_limits
+                      (program_id, limits)
                       VALUES (?, ?)
-                      """, [pid, t])
-    
+                      """, [pid (name), t])
     database.commit ()
