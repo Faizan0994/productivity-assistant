@@ -408,6 +408,12 @@ class MainWindow(QMainWindow):
             child.deleteLater()
         if self.contentArea.layout() is not None:
             self.contentArea.layout().deleteLater()
+            # To delete a layout, you must assign it to a temporary widget first
+            # and then delete the temporary widget
+            temp = QWidget()
+            temp.setLayout(self.contentArea.layout())
+            temp.setParent(None)
+            temp.deleteLater()
 
 
 def main():
