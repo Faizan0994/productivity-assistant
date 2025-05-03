@@ -277,3 +277,8 @@ def add_daily_limit (process_id: int, t: int):
                       """, [process_id, t])
     database.commit ()
 
+def daily_limited_process (process_id: int) -> sqlite3.Cursor:
+    return [process for process in cursordb.execute ("""
+                                                     SELECT * FROM daily_limits 
+                                                     WHERE program_id = ?
+                                                     """, [process_id])]
