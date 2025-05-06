@@ -1,18 +1,18 @@
 import sqlite3
 
-from win32api   import GetUserName
 from pathlib    import PureWindowsPath
 from os         import mkdir
 from os.path    import expanduser, join, isdir
-from .calc_time import to_utc
-from datetime   import datetime, timedelta
+from .calc_time import to_utc, SmallInterval, datetime, timedelta
+from .settings  import default_settings
+from .settings  import save_settings as set_default_settings
 
 # remove after completing ...
 from shutil     import rmtree
 
 # sets indexes and creates tables in the database
-def set_database (path, name):
-    database = sqlite3.connect (join (path, name))
+def set_database (databasePath, settingsPath):
+    database = sqlite3.connect (databasePath)
     dbcur = database.cursor ()
     dbcur.executescript ("""
                          BEGIN;
@@ -22,7 +22,7 @@ def set_database (path, name):
                          name TEXT NOT NULL); 
                          
                          CREATE TABLE time_stamps 
-                         (id INTEGER PRIMARY KEY,
+                         (id INTEGER PRIMARY KEY,   
                          program_id INTEGER NOT NULL,
                          start TEXT,
                          end TEXT,
@@ -38,8 +38,9 @@ def set_database (path, name):
                          
                          COMMIT;""")
     
+    set_default_settings (file_path = settingsPath, settings = default_settings)
+    
 # global variables
-userName = GetUserName ()
 databaseName = "data.db"
 
 # databasePath = join (expanduser ("~"), PureWindowsPath ("AppData", "Local", "Productivity Assistant"))
@@ -48,12 +49,15 @@ databaseName = "data.db"
 # database = sqlite3.connect (PureWindowsPath ("test_data", "data.db"))
 # cursordb = database.cursor ()
 
-databasePath = PureWindowsPath ("Test Data")
-freshDownload = not isdir (databasePath)
+path = PureWindowsPath ("Test Data")
+databasePath = PureWindowsPath ("Test Data", "data.db")
+settingsPath = PureWindowsPath ("Test Data", "settings.json")
+
+freshDownload = not isdir (path)
 
 if freshDownload:
-        mkdir (databasePath)
-        set_database (databasePath, databaseName)
+        mkdir (path)
+        set_database (databasePath, settingsPath)
         # run the introductory program ...
 
 # remove it after making database ...
@@ -63,7 +67,7 @@ if freshDownload:
 
 del (freshDownload)
 
-database = sqlite3.connect (join (databasePath, databaseName))
+database = sqlite3.connect (databasePath)
 cursordb = database.cursor ()
 
 def add_program (name: str):
@@ -97,9 +101,9 @@ def add_current (pid: int, sartTime: str) -> int:
                       """, [pid, sartTime])
     database.commit ()
     return [entery[0] for entery in cursordb.execute ("""
-                                                          SELECT * FROM time_stamps 
-                                                          ORDER BY id DESC
-                                                          """)] [0]
+                                                      SELECT * FROM time_stamps 
+                                                      ORDER BY id DESC
+                                                      """)] [0]
 
 def update_endtime (index: int, endTime: str) -> int:
     cursordb.execute ("""
@@ -277,7 +281,7 @@ def add_daily_limit (process_id: int, t: int):
                       """, [process_id, t])
     database.commit ()
 
-def daily_limited_process (process_id: int) -> sqlite3.Cursor:
+def daily_limited_program (process_id: int) -> sqlite3.Cursor:
     return [process for process in cursordb.execute ("""
                                                      SELECT * FROM daily_limits 
                                                      WHERE program_id = ?
