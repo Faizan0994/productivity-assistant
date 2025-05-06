@@ -1,9 +1,9 @@
 import sys
 import pyqtgraph as pg
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QLabel, QPushButton, QSizePolicy, QScrollArea
-from PyQt5.QtGui import QGuiApplication, QFontDatabase, QFont, QPen, QColor
+from PyQt5.QtGui import QGuiApplication, QFontDatabase, QFont, QPen, QColor, QIcon
 from PyQt5.QtSvg import QSvgWidget
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QSize
 from gui_library import SmartScrollArea, FixedAxis, CustomGridViewBox, LineDrawer
 from gui_data import *
 
@@ -383,6 +383,56 @@ class MainWindow(QMainWindow):
         self.activeTabButton = self.limitsTabButton
         self.limitsTabButton.setStyleSheet(self.activeTabButtonStyle)
         self.clearContentArea()
+        self.title.setText("Usage Limits")
+
+        limitsTabLayout = QVBoxLayout()
+        self.limitedAppsLayout = QVBoxLayout()
+        blockedAppsLayout = QVBoxLayout()
+
+        self.limitsSection = QWidget(self.contentArea)
+        self.blockingSection = QWidget(self.contentArea)
+        
+        # Title and info
+        self.limitedApps = QWidget(self.limitsSection)
+        self.limitedAppsTitle = QLabel("Limited Apps", self.limitsSection)
+        self.limitedAppsLine = LineDrawer(color = self.mutedColor, strokeWidth = int(0.2*self.vw), direction = "horizontal")
+        self.limitedAppsLine.setMinimumWidth(200)
+        self.limitedAppsLine.setMinimumHeight(int(0.2*self.vw))
+        self.limitedAppsLayout.addWidget(self.limitedAppsTitle)
+        self.limitedAppsLayout.addWidget(self.limitedAppsLine)
+        self.limitedAppsLayout.setContentsMargins(0,0,0,0)
+        self.displayLimits([("Code", "4h 3m 13s", "9h 30m")]) # Display the app limits info
+
+        # Button for adding new limits
+        self.limitsButtonContainer = QWidget(self.limitsSection)
+        limitsButtonLayout = QHBoxLayout()
+        limitsButtonLayout.setContentsMargins(0,0,0,0)
+        self.limitsPlusButton = QPushButton("+", self.limitsButtonContainer)
+        self.limitsPlusButton.setFont(QFont("Segoe UI", int(2.5 * self.vw), QFont.Bold))
+        self.limitsPlusButton.setFixedSize(int(8.5*self.vw), int(2.5*self.vw))
+        limitsButtonLayout.addWidget(self.limitsPlusButton, alignment= Qt.AlignVCenter | Qt.AlignRight)
+        self.limitsPlusButton.setCursor(Qt.PointingHandCursor)
+        self.limitsButtonContainer.setLayout(limitsButtonLayout)
+        self.limitedAppsLayout.addWidget(self.limitsButtonContainer)
+        self.limitsSection.setLayout(self.limitedAppsLayout)
+
+        self.limitedAppsTitle.setStyleSheet(f"""
+                                        font-size: {int(1.4*self.vw)}px;
+                                        font-weight: 400;
+                                        """)
+        self.limitsPlusButton.setStyleSheet(f"""
+                                        color: {self.cardBgColor};
+                                        font-size: {int(2.5*self.vw)}px;
+                                        font-weight: 300;
+                                        padding-bottom: {int(0.5*self.vw)}px;
+                                        border: none;
+                                        border-radius: 8px;
+                                        background-color: {self.primaryColor};
+                                        """)
+
+        limitsTabLayout.addWidget(self.limitsSection)
+        limitsTabLayout.addWidget(self.blockingSection)
+        self.contentArea.setLayout(limitsTabLayout)
 
 
     def renderSettingsTab(self):
@@ -390,6 +440,69 @@ class MainWindow(QMainWindow):
         self.activeTabButton = self.settingsButton
         self.settingsButton.setStyleSheet(self.activeTabButtonStyle)
         self.clearContentArea()
+    
+
+    def displayLimits(self, limitedAppUsageToday = []): # Display the app limits info
+        limitsBlockLayout = QVBoxLayout()
+        limitsBlockContainer = QWidget(self.limitsSection)
+        for info in limitedAppUsageToday:
+            appInfoLayout = QHBoxLayout()
+            cardLayout = QHBoxLayout()
+            card = QWidget(limitsBlockContainer)
+            appInfo = QWidget(card)
+            appTitle = QLabel(info[0], appInfo)
+            appTitle.setAlignment(Qt.AlignVCenter)
+            appTime = QLabel(info[1] + " / " + info[2], card)
+            appTime.setAlignment(Qt.AlignCenter)
+            appIcon = QSvgWidget("./assets/app-icon.svg", appInfo)
+            appIcon.setFixedSize(int(3*self.vw), int(3*self.vw))
+            appIcon.setStyleSheet(f"color: {self.textColor};")
+            buttonContainer = QWidget(card)
+            buttonContainer.setStyleSheet("border: none;")
+            containerLayout = QHBoxLayout()
+            containerLayout.setContentsMargins(0,0,0,0)
+            deletelimitButton = QPushButton(buttonContainer)
+            deletelimitButton.setIcon(QIcon("./assets/delete-icon.svg"))
+            deletelimitButton.setIconSize(QSize(int(2*self.vw), int(2*self.vw)))
+            deletelimitButton.setCursor(Qt.PointingHandCursor)
+            containerLayout.addWidget(deletelimitButton, alignment= Qt.AlignVCenter | Qt.AlignRight)
+            buttonContainer.setLayout(containerLayout)
+            appInfoLayout.addWidget(appIcon)
+            appInfoLayout.addWidget(appTitle)
+            appInfoLayout.setContentsMargins(0,0,0,0)
+            appInfo.setLayout(appInfoLayout)
+            cardLayout.addWidget(appInfo)
+            cardLayout.addWidget(appTime)
+            cardLayout.addWidget(buttonContainer)
+            margin = int(0.5*self.vw)
+            cardLayout.setContentsMargins(margin*2, margin, margin*2, margin)
+            card.setLayout(cardLayout)
+            limitsBlockLayout.addWidget(card)
+
+            card.setStyleSheet(f"""
+                                border: 1px solid {self.cardOutlineColor};
+                                background-color: {self.cardBgColor};
+                                border-radius: 8px;
+                            """)
+            appInfo.setStyleSheet(f"""
+                                border: none;
+                                border-radius: 0px;
+                                font-size: {int(1.6*self.vw)}px;
+                                """)
+            appTime.setStyleSheet(f"""
+                                border: none;
+                                border-radius: 0px;
+                                font-size: {int(1.4*self.vw)}px;
+                                font-weight: 500;
+                                """)
+            deletelimitButton.setStyleSheet(f"""
+                                            color: {self.textColor};
+                                            border: none
+                                            """)
+        limitsBlockLayout.setContentsMargins(0,0,0,0)
+        limitsBlockLayout.setSpacing(int(0.8*self.vw))
+        limitsBlockContainer.setLayout(limitsBlockLayout)
+        self.limitedAppsLayout.addWidget(limitsBlockContainer)
     
     
     def clearContentArea(self): # Wipe out everything except the header
