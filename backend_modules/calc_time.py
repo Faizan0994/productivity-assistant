@@ -3,6 +3,13 @@ from pytz       import timezone
 from datetime   import datetime
 from datetime   import timedelta
 
+class SmallInterval (Exception):
+            def __init__(self, message):
+                self.message = message
+                super().__init__(message)
+            def __str__ (self):
+                return self.message
+
 def current_time () -> datetime:
     return add_local_tz(datetime.today ())
 
@@ -52,12 +59,6 @@ def x_points (start: datetime, end: datetime) -> list:
 
         return points
     else:
-        class SmallInterval (Exception):
-            def __init__(self, message):
-                self.message = message
-                super().__init__(message)
-            def __str__ (self):
-                return self.message
         raise SmallInterval (f"The interval is small: {difference}")
     
 def weekdays (datetimeObj: datetime):
@@ -67,7 +68,7 @@ def weekdays (datetimeObj: datetime):
 def total_hours (timedeltaObj: timedelta):
     return timedeltaObj.total_seconds () / 3600
 
-def convert_seconds(seconds):
+def convert_seconds (seconds):
     hours = seconds // 3600
     seconds %= 3600
     minutes = seconds // 60
