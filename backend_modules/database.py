@@ -11,7 +11,7 @@ from .link      import path, databasePath, settingsPath
 from shutil     import rmtree
 
 # errors
-class NoLimitFound (Exception):
+class NoRecordFound (Exception):
     def __init__(self, message):
         self.message = message
         super().__init__(message)
@@ -266,7 +266,7 @@ def most_used_app (start: str = "", end: str = "") -> tuple:
     if not appUsage == []:
         return appUsage [0]
     else:
-        return ('--', timedelta (0))
+        raise NoRecordFound ("No available data")
     
 def add_daily_limit (process_id: int, t: int):
     # adds program to daily limited database
@@ -296,4 +296,4 @@ def get_limit (process_id: int) -> sqlite3.Cursor:
                                                             WHERE id = ?
                                                             """, [process_id])] [0]        
         
-        raise NoLimitFound (f"No limit found for {process}")
+        raise NoRecordFound (f"No limit found for {process}")
