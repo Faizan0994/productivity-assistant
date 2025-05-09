@@ -26,7 +26,6 @@ def assistant (prevApp: program):
                 prevApp.set_time ("end")
                 update_endtime (index, prevApp.endTime)
         
-        # database.total_time ("Code")
         sleep (1)
 
 
