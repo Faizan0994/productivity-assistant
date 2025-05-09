@@ -1,7 +1,6 @@
 import json
 from datetime   import time
-from pathlib    import PureWindowsPath
-from .link       import settingsPath
+from .link      import settingsPath
 
 default_settings = {
             "theme": "dark",
