@@ -67,8 +67,8 @@ def add_program (name: str):
                       """, [name])
     database.commit ()
 
-# returns the process id in *our* database
 def pid (name: str) -> int:
+    # returns the process id in *our* database
     try:
         return [entery[0] for entery in cursordb.execute ("""
                                                           SELECT id FROM programs 
@@ -84,6 +84,7 @@ def pid (name: str) -> int:
         raise ProgramNotFound (f"Application not in database: {name}")
 
 def add_current (pid: int, sartTime: str) -> int:
+    # Adds program and time tracked. It returns its id
     cursordb.execute ("""
                       INSERT INTO time_stamps 
                       (program_id, start) VALUES (?, ?)
@@ -95,6 +96,7 @@ def add_current (pid: int, sartTime: str) -> int:
                                                       """)] [0]
 
 def update_endtime (index: int, endTime: str) -> int:
+    # Updates the end time of program
     cursordb.execute ("""
                       UPDATE time_stamps 
                       SET end = ? WHERE id = ?
@@ -238,9 +240,7 @@ def execution (start:str = "", end: str = "") -> tuple:
 
 
 def app_usage (start: str = "", end: str = "") -> list:
-    """
-    returns the list of app, time spent tuple
-    """
+    # returns the list of app, time spent tuple
     
     apps = programs_in_duration (start, end)
     appUsage = []
@@ -251,10 +251,9 @@ def app_usage (start: str = "", end: str = "") -> list:
     return sorted (appUsage, key = lambda appTuple: appTuple [1], reverse = True)
 
 def most_used_app (start: str = "", end: str = "") -> tuple:
-    """
-    returns  the most used  app within the  given
-    duration
-    """
+    # returns  the  most  used app  within  the  given
+    # duration
+    
     appUsage = app_usage (start, end)
 
     if not appUsage == []:
@@ -263,6 +262,7 @@ def most_used_app (start: str = "", end: str = "") -> tuple:
         return ('--', timedelta (0))
     
 def add_daily_limit (process_id: int, t: int):
+    # adds program to daily limited database
     cursordb.execute ("""
                       INSERT INTO daily_limits
                       (program_id, limits)
@@ -271,6 +271,7 @@ def add_daily_limit (process_id: int, t: int):
     database.commit ()
 
 def daily_limited_program (process_id: int) -> sqlite3.Cursor:
+    # returns daily limited program and its time
     return [process for process in cursordb.execute ("""
                                                      SELECT * FROM daily_limits 
                                                      WHERE program_id = ?
