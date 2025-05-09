@@ -2,10 +2,11 @@ import sqlite3
 
 from pathlib    import PureWindowsPath
 from os         import mkdir
-from os.path    import expanduser, join, isdir
-from .calc_time import to_utc, SmallInterval, datetime, timedelta
+from os.path    import isdir
+from .calc_time import to_utc, datetime, timedelta
 from .settings  import default_settings
 from .settings  import save_settings as set_default_settings
+from .link       import path, databasePath, settingsPath
 
 # remove after completing ...
 from shutil     import rmtree
@@ -39,19 +40,7 @@ def set_database (databasePath, settingsPath):
                          COMMIT;""")
     
     set_default_settings (file_path = settingsPath, settings = default_settings)
-    
-# global variables
-databaseName = "data.db"
-
-# databasePath = join (expanduser ("~"), PureWindowsPath ("AppData", "Local", "Productivity Assistant"))
-# temporary data ...
-# temporary database, use it for debugging ...
-# database = sqlite3.connect (PureWindowsPath ("test_data", "data.db"))
-# cursordb = database.cursor ()
-
-path = PureWindowsPath ("Test Data")
-databasePath = PureWindowsPath ("Test Data", "data.db")
-settingsPath = PureWindowsPath ("Test Data", "settings.json")
+    settingPath = settingsPath
 
 freshDownload = not isdir (path)
 
@@ -62,7 +51,7 @@ if freshDownload:
 
 # remove it after making database ...
 # else:
-#       rmtree (databasePath)
+#       rmtree (path)
 #       exit ("Removed file")
 
 del (freshDownload)
