@@ -2,6 +2,7 @@ from tzlocal    import get_localzone_name
 from pytz       import timezone
 from datetime   import datetime, timedelta, time
 
+# errors
 class SmallInterval (Exception):
             def __init__(self, message):
                 self.message = message

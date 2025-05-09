@@ -10,7 +10,7 @@ from .calc_time     import (convert_to_time,
 
 from .database      import ( get_limit,
                             in_program_list, 
-                            NoLimitFound,
+                            NoRecordFound,
                             add_program, 
                             time_spent, 
                             pid) 
@@ -61,7 +61,7 @@ class program:
             # gets limit of the program
             try:
                 self.limit = get_limit (self.process_id)
-            except NoLimitFound:
+            except NoRecordFound:
                 self.limit = None
             
             if not isinstance (self.limit, type (None)):
