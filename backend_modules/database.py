@@ -5,10 +5,18 @@ from os.path    import isdir
 from .calc_time import to_utc, datetime, timedelta
 from .settings  import default_settings
 from .settings  import save_settings as set_default_settings
-from .link       import path, databasePath, settingsPath
+from .link      import path, databasePath, settingsPath
 
 # remove after completing ...
 from shutil     import rmtree
+
+# errors
+class NoLimitFound (Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(message)
+    def __str__(self):
+        return self.message
 
 # sets indexes and creates tables in the database
 def set_database (databasePath, settingsPath):
@@ -269,7 +277,7 @@ def add_daily_limit (process_id: int, t: int):
                       """, [process_id, t])
     database.commit ()
 
-def daily_limited_program (process_id: int) -> sqlite3.Cursor:
+def get_limit (process_id: int) -> sqlite3.Cursor:
     """
     Returns daily limited program and its time, if not
     found it raises the exception of NoLimitFound
@@ -278,19 +286,11 @@ def daily_limited_program (process_id: int) -> sqlite3.Cursor:
     limit = [process for process in cursordb.execute ("""
                                                       SELECT * FROM daily_limits 
                                                       WHERE program_id = ?
-                                                      """, [process_id])]
+                                                      """, [process_id])] [0]
     
     if not limit == []:
         return limit
-    else:
-        class NoLimitFound (Exception):
-            def __init__(self, message):
-                self.message = message
-                super().__init__(message)
-
-            def __str__(self):
-                return self.message
-        
+    else:        
         process = [program for program in cursordb.execute ("""
                                                             SELECT name FROM programs 
                                                             WHERE id = ?
