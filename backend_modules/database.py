@@ -1,6 +1,5 @@
 import sqlite3
 
-from pathlib    import PureWindowsPath
 from os         import mkdir
 from os.path    import isdir
 from .calc_time import to_utc, datetime, timedelta
@@ -132,10 +131,10 @@ def cordinates (timerange: list, name: str = "") -> list:
             points.append ((startTime, intervals))
     else:
         class ArrayLength (Exception):
-            def __init__(self, message):
+            def __init__ (self, message):
                 self.message = message
-                super().__init__(message)
-            def __str__(self):
+                super().__init__ (message)
+            def __str__ (self):
                 return self.message
         raise ArrayLength ("The length of list is too small")
 
@@ -271,8 +270,30 @@ def add_daily_limit (process_id: int, t: int):
     database.commit ()
 
 def daily_limited_program (process_id: int) -> sqlite3.Cursor:
-    # returns daily limited program and its time
-    return [process for process in cursordb.execute ("""
-                                                     SELECT * FROM daily_limits 
-                                                     WHERE program_id = ?
-                                                     """, [process_id])]
+    """
+    Returns daily limited program and its time, if not
+    found it raises the exception of NoLimitFound
+    """
+    
+    limit = [process for process in cursordb.execute ("""
+                                                      SELECT * FROM daily_limits 
+                                                      WHERE program_id = ?
+                                                      """, [process_id])]
+    
+    if not limit == []:
+        return limit
+    else:
+        class NoLimitFound (Exception):
+            def __init__(self, message):
+                self.message = message
+                super().__init__(message)
+
+            def __str__(self):
+                return self.message
+        
+        process = [program for program in cursordb.execute ("""
+                                                            SELECT name FROM programs 
+                                                            WHERE id = ?
+                                                            """, [process_id])] [0]        
+        
+        raise NoLimitFound (f"No limit found for {process}")
