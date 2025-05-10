@@ -308,3 +308,11 @@ def all_daily_limits () -> list[tuple]:
                                                        ON programs.id = daily_limits.limits_id 
                                                        WHERE daily_limits.limits IS NOT NULL;
                                                        """)]
+
+def update_daily_limit (name: str, t: int) -> None:
+    cursordb.execute ("""
+                      UPDATE daily_limits 
+                      SET limits = ? 
+                      WHERE limits_id = ?
+                      """, [t, pid (name)])
+    database.commit ()
