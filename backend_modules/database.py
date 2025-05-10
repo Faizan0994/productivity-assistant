@@ -298,8 +298,9 @@ def get_limit (process_id: int) -> sqlite3.Cursor:
         
         raise NoRecordFound (f"No limit found for {process}")
 
-def all_daily_limits ():
+def all_daily_limits () -> list[tuple]:
     # displays all the daily limits
+    # return format: [(id, name, limit), ...]
     return [programs for programs in cursordb.execute ("""
                                                        SELECT programs.id, programs.name, daily_limits.limits 
                                                        FROM programs 
