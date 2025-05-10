@@ -223,7 +223,11 @@ class MainWindow(QMainWindow):
         gridPen = QPen(QColor(self.mutedColor))
         days = [1, 2, 3, 4, 5, 6, 7]
         usageTime = [2, 3, 4, 4, 2, 1, 5]
+        padding = 0.1 # padding both sides of x-axis so that Labels are not cut off
+        x_min = days[0] - padding
+        x_max = days[-1] + padding
         graphStyles = {"color": f"{self.textColor}", "font-size": f"{int(1.5*self.vw)}px"}
+        self.graph.setXRange(x_min, x_max)
         self.graph.setTitle("Screen Time", color = self.textColor, size = f"{int(1.5*self.vw)}pt")
         self.graph.showGrid(x = False, y = True)
         self.graph.setMouseEnabled(x=False, y=False)
