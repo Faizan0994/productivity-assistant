@@ -37,9 +37,9 @@ def set_database (databasePath, settingsPath):
                          FOREIGN KEY (program_id) REFERENCES programs (id)); 
                          
                          CREATE TABLE daily_limits
-                         (program_id INTIGER NOT NULL,
+                         (limits_id INTIGER NOT NULL,
                          limits INTIGER NOT NULL,
-                         FOREIGN KEY (program_id) REFERENCES programs (id)); 
+                         FOREIGN KEY (limits_id) REFERENCES programs (id)); 
                          
                          CREATE UNIQUE INDEX program_name 
                          ON programs (name); 
@@ -272,7 +272,7 @@ def add_daily_limit (process_id: int, t: int):
     # adds program to daily limited database
     cursordb.execute ("""
                       INSERT INTO daily_limits
-                      (program_id, limits)
+                      (limits_id, limits)
                       VALUES (?, ?)
                       """, [process_id, t])
     database.commit ()
@@ -285,8 +285,8 @@ def get_limit (process_id: int) -> sqlite3.Cursor:
     
     limit = [process for process in cursordb.execute ("""
                                                       SELECT * FROM daily_limits 
-                                                      WHERE program_id = ?
-                                                      """, [process_id])] [0]
+                                                      WHERE limits_id = ?
+                                                      """, [process_id])]
     
     if not limit == []:
         return limit
@@ -297,3 +297,13 @@ def get_limit (process_id: int) -> sqlite3.Cursor:
                                                             """, [process_id])] [0]        
         
         raise NoRecordFound (f"No limit found for {process}")
+
+def all_daily_limits ():
+    # displays all the daily limits
+    return [programs for programs in cursordb.execute ("""
+                                                       SELECT programs.id, programs.name, daily_limits.limits 
+                                                       FROM programs 
+                                                       LEFT JOIN daily_limits 
+                                                       ON programs.id = daily_limits.limits_id 
+                                                       WHERE daily_limits.limits IS NOT NULL;
+                                                       """)]
