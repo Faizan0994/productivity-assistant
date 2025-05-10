@@ -3,6 +3,28 @@ from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtGui import QPen, QColor, QPainter
 import pyqtgraph as pg
 
+lightColors = {
+    "bgColor": "#EDF1F5",
+    "primaryColor": "#3B82F6",
+    "accentColor": "#38BDF8",
+    "textColor": "#1E293B",
+    "mutedColor": "#878E97",
+    "cardOutlineColor": "#8199B7",
+    "cardBgColor": "#E2E8F0",
+    "scrollBarColor": "#94A3B8"
+}
+
+darkColors = {
+    "bgColor": "#1F2937",
+    "primaryColor": "#60A5FA",
+    "accentColor": "#F472B6",
+    "textColor": "#F9FAFB",
+    "mutedColor": "#4B5563",
+    "cardOutlineColor": "#334155",
+    "cardBgColor": "#1E293B",
+    "scrollBarColor": "#4B5563"
+}
+
 class SmartScrollArea(QScrollArea):
     def __init__(self):
         super().__init__()
