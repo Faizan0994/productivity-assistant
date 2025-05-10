@@ -28,6 +28,5 @@ def assistant (prevApp: program):
         
         sleep (1)
 
-
 # main function execution 
 assistant (app)
