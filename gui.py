@@ -221,8 +221,8 @@ class MainWindow(QMainWindow):
         self.graphSection.setObjectName("graphSection")
         myPen = pg.mkPen(color = self.primaryColor, width = int(0.25*self.vw))
         gridPen = QPen(QColor(self.mutedColor))
-        days = [1, 2, 3, 4, 5, 6, 7]
-        usageTime = [2, 3, 4, 4, 2, 1, 5]
+        days = xPoints
+        usageTime = yPoints
         padding = 0.1 # padding both sides of x-axis so that Labels are not cut off
         x_min = days[0] - padding
         x_max = days[-1] + padding
