@@ -316,3 +316,11 @@ def update_daily_limit (name: str, t: int) -> None:
                       WHERE limits_id = ?
                       """, [t, pid (name)])
     database.commit ()
+
+def delete_daily_limit (name: str) -> None:
+    # to delete daily limits
+    cursordb.execute ("""
+                      DELETE FROM daily_limits 
+                      WHERE limits_id = ?
+                      """, [pid (name)])
+    database.commit ()
