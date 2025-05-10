@@ -10,6 +10,25 @@ from backend_modules.calc_time import (current_time,
                                        x_points, 
                                        total_hours)
 
+def convert_weekdays(weekdays) -> list:
+    """
+    Converts the weekdays from 0-6 to values prior to taking modulus 7.
+    This is done to prevent the graph from distorting due to default sorting of pyqtgraph
+    """
+
+    newWeekDays = []
+    factor = 0
+    for i in range (len(weekdays)):
+        val = weekdays[i]
+        if i == 0:
+            newWeekDays.append(val)
+            continue # for the first element, no need to add factor
+        prev = weekdays[i - 1]
+        if val <= prev: # detect restart of week
+            factor += 7
+        newWeekDays.append(val + factor)
+    return newWeekDays
+
 midnight = datetime.combine(datetime.today(), datetime.min.time()).isoformat()
 lastMidnight = datetime.combine(datetime.today() - timedelta(days=1), datetime.min.time()).isoformat()
 currentTime = current_time().isoformat()
@@ -59,6 +78,7 @@ now = current_time ()
 xPoints = x_points (now - timedelta (weeks = 1), now)
 axis = cordinates (xPoints)
 xPoints = [weekdays (point [0]) for point in axis]
+xPoints = convert_weekdays(xPoints)
 yPoints = [total_hours (point [1]) for point in axis]
 
 # Apps used in the current week

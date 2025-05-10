@@ -30,7 +30,7 @@ class FixedAxis(pg.AxisItem): # Tweaking the axes a little
         self.labels = labels or {}
 
     def tickStrings(self, values, scale, spacing): # Overriding the tickStrings method
-        return [self.labels.get(int(val), str(int(val))) for val in values]
+        return [self.labels.get(int(val) % 7, str(int(val))) for val in values]
     
     def tickValues(self, minVal, maxVal, size): # Overriding the tickValues method, to remove subticks
         majorTicks = [(i, 0) for i in range(int(minVal), int(maxVal) + 1)]
