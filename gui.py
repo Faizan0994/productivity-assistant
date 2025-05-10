@@ -4,20 +4,10 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHB
 from PyQt5.QtGui import QGuiApplication, QFontDatabase, QFont, QPen, QColor, QIcon
 from PyQt5.QtSvg import QSvgWidget
 from PyQt5.QtCore import Qt, QSize
-from gui_library import SmartScrollArea, FixedAxis, CustomGridViewBox, LineDrawer
+from gui_library import SmartScrollArea, FixedAxis, CustomGridViewBox, LineDrawer, addLimitDialogBox, lightColors, darkColors
 from gui_data import *
 
 class MainWindow(QMainWindow):
-    # This will be changed later
-    bgColor = "#EDF1F5"
-    primaryColor = "#3B82F6"
-    accentColor = "#38BDF8"
-    textColor = "#1E293B"
-    mutedColor = "#878E97"
-    cardOutlineColor = "#8199B7"
-    cardBgColor = "#E2E8F0"
-    scrollBarColor = "#94A3B8"
-
     def __init__(self):
         super().__init__()
         screen = QGuiApplication.primaryScreen().availableGeometry()
@@ -32,7 +22,24 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Productivity Assistant")
         self.setFixedSize(self.windowWidth, self.windowHeight)
         self.move(centeringVertex[0], centeringVertex[1]) # the center of screen
+        self.setTheme("light")
         self.initUI()
+
+
+    def setTheme(self, theme = "light"):
+        if theme == "light":
+            colors = lightColors
+        elif theme == "dark":
+            colors = darkColors
+
+        self.bgColor = colors["bgColor"]
+        self.primaryColor = colors["primaryColor"]
+        self.accentColor = colors["accentColor"]
+        self.textColor = colors["textColor"]
+        self.mutedColor = colors["mutedColor"]
+        self.cardOutlineColor = colors["cardOutlineColor"]
+        self.cardBgColor = colors["cardBgColor"]
+        self.scrollBarColor = colors["scrollBarColor"]
 
 
     def initUI(self): # Builds the basic structure
