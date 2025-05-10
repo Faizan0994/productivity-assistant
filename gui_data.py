@@ -2,7 +2,8 @@ from datetime import datetime, timedelta
 from backend_modules.database import (most_used_app, 
                                       time_spent, 
                                       cordinates, 
-                                      app_usage)
+                                      app_usage, 
+                                      NoRecordFound)
 from backend_modules.calc_time import (current_time, 
                                        to_utc, 
                                        convert_seconds, 
@@ -36,7 +37,7 @@ startOfWeek = (current_time() - timedelta(weeks=1)).isoformat()
 startOfLastWeek = (current_time() - timedelta(weeks=2)).isoformat()
 try:
     mostUsedApp = most_used_app(midnight, currentTime) [0] # first element is the name of the app
-except IndexError:
+except NoRecordFound:
     mostUsedApp = "--"
 # calculate screen time
 timeSpentSeconds = int(time_spent(midnight, currentTime).total_seconds())
