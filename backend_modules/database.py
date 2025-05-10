@@ -126,6 +126,16 @@ def in_program_list (name: str) -> bool:
     else:
          return True
 
+def all_programs () -> list[tuple]:
+    # returns the list of all programs
+    programs = [programs for programs in cursordb.execute ("""
+                                                           SELECT * FROM programs
+                                                           """)]
+    if not programs == []:
+        return programs
+    else:
+        raise NoRecordFound ("No programs found")
+
 def cordinates (timerange: list, name: str = "") -> list:
     """
     Returns a list of touples of time stamp displayed on x-axis 
