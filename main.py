@@ -20,15 +20,13 @@ def assistant (prevApp: program):
                     update_endtime (index, prevApp.endTime)
                 
                 currApp.set_time ("start")
-                index = add_current (currApp.pid, currApp.startTime)
+                index = add_current (currApp.process_id, currApp.startTime)
                 prevApp = currApp
             else:
                 prevApp.set_time ("end")
                 update_endtime (index, prevApp.endTime)
         
-        # database.total_time ("Code")
         sleep (1)
-
 
 # main function execution 
 assistant (app)

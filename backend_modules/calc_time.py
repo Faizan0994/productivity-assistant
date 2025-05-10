@@ -1,16 +1,26 @@
 from tzlocal    import get_localzone_name
 from pytz       import timezone
-from datetime   import datetime
-from datetime   import timedelta
+from datetime   import datetime, timedelta, time
+
+# errors
+class SmallInterval (Exception):
+            def __init__(self, message):
+                self.message = message
+                super().__init__(message)
+            def __str__ (self):
+                return self.message
 
 def current_time () -> datetime:
+    # returns the time at the momenet
     return add_local_tz(datetime.today ())
 
 def add_local_tz (datetimeObj: datetime) -> datetime:
+    # adds local timezone
     zone = timezone (get_localzone_name ())
     return zone.localize (datetimeObj)
 
 def to_utc (datetimeObj: datetime) -> datetime:
+    # converts it to UTC
     return datetimeObj.astimezone (timezone ("UTC"))
 
 def x_points (start: datetime, end: datetime) -> list:
@@ -39,34 +49,38 @@ def x_points (start: datetime, end: datetime) -> list:
         points = []
 
         if rows == 0:
-            itter = range (unitTime + 1)
+            itter = range (unitTime)
         else:
-            itter = range (11)
+            itter = range (10)
             decrement = decrement * rows 
         
         for n in itter:
-                points.append(end - (n * decrement))        
+                points.append (end - (n * decrement))        
         points.reverse ()
+
+        points.extend ([end + decrement])
 
         return points
     else:
-        class SmallInterval (Exception):
-            def __init__(self, message):
-                self.message = message
-                super().__init__(message)
-            def __str__ (self):
-                return self.message
         raise SmallInterval (f"The interval is small: {difference}")
     
-def weekdays (datetimeObj: datetime) -> int:
-    return datetimeObj.weekday ()
+def weekdays (datetimeObj: datetime) -> str:
+    # returns the weekdays' name
+    weekdaysName = ["Monday", "Tuesday", "Wednessday", "Thursday", "Friday", "Saturday", "Sunday"]
+    return weekdaysName[datetimeObj.weekday ()]
 
 def total_hours (timedeltaObj: timedelta):
     return timedeltaObj.total_seconds () / 3600
 
-def convert_seconds(seconds):
+def convert_seconds (seconds: int) -> tuple:
+    # convertes  total  secods  to  respective  hours, 
+    # minutes and seconds
     hours = seconds // 3600
     seconds %= 3600
     minutes = seconds // 60
     seconds %= 60
     return (hours, minutes, seconds)
+
+def convert_to_time (t: str) -> time:
+    # returns time string into time object
+     return time.fromisoformat (t)

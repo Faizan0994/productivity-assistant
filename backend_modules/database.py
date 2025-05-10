@@ -1,98 +1,109 @@
 import sqlite3
 
-from win32api   import GetUserName
-from pathlib    import PureWindowsPath
 from os         import mkdir
-from os.path    import expanduser, join, isdir
-from .calc_time import to_utc
-from datetime   import datetime, timedelta
+from os.path    import isdir
+from .calc_time import to_utc, datetime, timedelta
+from .settings  import default_settings
+from .settings  import save_settings as set_default_settings
+from .link      import path, databasePath, settingsPath
 
 # remove after completing ...
 from shutil     import rmtree
 
+# errors
+class NoRecordFound (Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(message)
+    def __str__(self):
+        return self.message
+
 # sets indexes and creates tables in the database
-def set_database (path, name):
-    database = sqlite3.connect (join (path, name))
+def set_database (databasePath, settingsPath):
+    database = sqlite3.connect (databasePath)
     dbcur = database.cursor ()
     dbcur.executescript ("""
                          BEGIN;
                          
                          CREATE TABLE programs 
-                         (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                         (id INTEGER PRIMARY KEY,
                          name TEXT NOT NULL); 
                          
                          CREATE TABLE time_stamps 
-                         (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                         (id INTEGER PRIMARY KEY,   
                          program_id INTEGER NOT NULL,
                          start TEXT,
                          end TEXT,
                          FOREIGN KEY (program_id) REFERENCES programs (id)); 
                          
                          CREATE TABLE daily_limits
-                         (program_id INTIGER NOT NULL,
+                         (limits_id INTIGER NOT NULL,
                          limits INTIGER NOT NULL,
-                         FOREIGN KEY (program_id) REFERENCES programs (id)); 
+                         FOREIGN KEY (limits_id) REFERENCES programs (id)); 
                          
                          CREATE UNIQUE INDEX program_name 
                          ON programs (name); 
                          
                          COMMIT;""")
     
-# global variables
-userName = GetUserName ()
-databaseName = "data.db"
+    set_default_settings (file_path = settingsPath, settings = default_settings)
+    settingPath = settingsPath
 
-# databasePath = join (expanduser ("~"), PureWindowsPath ("AppData", "Local", "Productivity Assistant"))
-# temporary data ...
-# temporary database, use it for debugging ...
-# database = sqlite3.connect (PureWindowsPath ("test_data", "data.db"))
-# cursordb = database.cursor ()
-
-databasePath = PureWindowsPath ("Test Data")
-freshDownload = not isdir (databasePath)
+freshDownload = not isdir (path)
 
 if freshDownload:
-        mkdir (databasePath)
-        set_database (databasePath, databaseName)
+        mkdir (path)
+        set_database (databasePath, settingsPath)
         # run the introductory program ...
 
 # remove it after making database ...
 # else:
-#       rmtree (databasePath)
+#       rmtree (path)
 #       exit ("Removed file")
 
 del (freshDownload)
 
-database = sqlite3.connect (join (databasePath, databaseName))
+database = sqlite3.connect (databasePath)
 cursordb = database.cursor ()
 
 def add_program (name: str):
     # inorder to auto increment use null
     cursordb.execute ("""
-                      INSERT INTO programs 
-                      VALUES (NULL, ?)
+                      INSERT INTO programs (name)
+                      VALUES (?)
                       """, [name])
     database.commit ()
 
-# returns the process id in *our* database
 def pid (name: str) -> int:
-    return [entery[0] for entery in cursordb.execute ("""
-                                                      SELECT id FROM programs WHERE name = ?
-                                                      """, [name])] [0]
+    # returns the process id in *our* database
+    try:
+        return [entery[0] for entery in cursordb.execute ("""
+                                                          SELECT id FROM programs 
+                                                          WHERE name = ?
+                                                          """, [name])] [0]
+    except IndexError:
+        class ProgramNotFound (Exception):
+            def __init__(self, message):
+                self.message = message
+                super().__init__(message)
+            def __str__ (self):
+                return self.message
+        raise ProgramNotFound (f"Application not in database: {name}")
 
 def add_current (pid: int, sartTime: str) -> int:
+    # Adds program and time tracked. It returns its id
     cursordb.execute ("""
                       INSERT INTO time_stamps 
                       (program_id, start) VALUES (?, ?)
                       """, [pid, sartTime])
     database.commit ()
-    entry_id = [entery[0] for entery in cursordb.execute ("""
-                                                          SELECT * FROM time_stamps 
-                                                          ORDER BY id DESC
-                                                          """)] [0]
-    return entry_id
+    return [entery[0] for entery in cursordb.execute ("""
+                                                      SELECT * FROM time_stamps 
+                                                      ORDER BY id DESC
+                                                      """)] [0]
 
 def update_endtime (index: int, endTime: str) -> int:
+    # Updates the end time of program
     cursordb.execute ("""
                       UPDATE time_stamps 
                       SET end = ? WHERE id = ?
@@ -128,10 +139,10 @@ def cordinates (timerange: list, name: str = "") -> list:
             points.append ((startTime, intervals))
     else:
         class ArrayLength (Exception):
-            def __init__(self, message):
+            def __init__ (self, message):
                 self.message = message
-                super().__init__(message)
-            def __str__(self):
+                super().__init__ (message)
+            def __str__ (self):
                 return self.message
         raise ArrayLength ("The length of list is too small")
 
@@ -235,10 +246,8 @@ def execution (start:str = "", end: str = "") -> tuple:
     return (sql, parameters)
 
 
-def app_usage (start: str = "", end: str = ""):
-    """
-    returns the list of app, time spent tuple
-    """
+def app_usage (start: str = "", end: str = "") -> list:
+    # returns the list of app, time spent tuple
     
     apps = programs_in_duration (start, end)
     appUsage = []
@@ -248,26 +257,70 @@ def app_usage (start: str = "", end: str = ""):
     
     return sorted (appUsage, key = lambda appTuple: appTuple [1], reverse = True)
 
-def most_used_app (start: str = "", end: str = ""):
-    """
-    returns  the most used  app within the  given
-    duration
-    """
+def most_used_app (start: str = "", end: str = "") -> tuple:
+    # returns  the  most  used app  within  the  given
+    # duration
+    
     appUsage = app_usage (start, end)
 
     if not appUsage == []:
         return appUsage [0]
     else:
-        return appUsage
+        raise NoRecordFound ("No available data")
     
-def add_daily_limit (t: int, program: str):
-    pid = [app[0] for app in cursordb.execute ("""SELECT id FROM programs 
-                                               WHERE name = ?
-                                               """, [program])] [0]
-    
+def add_daily_limit (process_id: int, t: int):
+    # adds program to daily limited database
     cursordb.execute ("""
                       INSERT INTO daily_limits
+                      (limits_id, limits)
                       VALUES (?, ?)
-                      """, [pid, t])
+                      """, [process_id, t])
+    database.commit ()
+
+def get_limit (process_id: int) -> sqlite3.Cursor:
+    """
+    Returns daily limited program and its time, if not
+    found it raises the exception of NoLimitFound
+    """
     
+    limit = [process for process in cursordb.execute ("""
+                                                      SELECT * FROM daily_limits 
+                                                      WHERE limits_id = ?
+                                                      """, [process_id])]
+    
+    if not limit == []:
+        return limit
+    else:        
+        process = [program for program in cursordb.execute ("""
+                                                            SELECT name FROM programs 
+                                                            WHERE id = ?
+                                                            """, [process_id])] [0]        
+        
+        raise NoRecordFound (f"No limit found for {process}")
+
+def all_daily_limits () -> list[tuple]:
+    # displays all the daily limits
+    # return format: [(id, name, limit), ...]
+    return [programs for programs in cursordb.execute ("""
+                                                       SELECT programs.id, programs.name, daily_limits.limits 
+                                                       FROM programs 
+                                                       LEFT JOIN daily_limits 
+                                                       ON programs.id = daily_limits.limits_id 
+                                                       WHERE daily_limits.limits IS NOT NULL;
+                                                       """)]
+
+def update_daily_limit (name: str, t: int) -> None:
+    cursordb.execute ("""
+                      UPDATE daily_limits 
+                      SET limits = ? 
+                      WHERE limits_id = ?
+                      """, [t, pid (name)])
+    database.commit ()
+
+def delete_daily_limit (name: str) -> None:
+    # to delete daily limits
+    cursordb.execute ("""
+                      DELETE FROM daily_limits 
+                      WHERE limits_id = ?
+                      """, [pid (name)])
     database.commit ()
