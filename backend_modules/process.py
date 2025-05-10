@@ -65,7 +65,7 @@ class program:
                 self.limit = None
             
             if not isinstance (self.limit, type (None)):
-                self.limit = timedelta (minutes = self.limit [1])
+                self.limit = timedelta (minutes = self.limit [0][1])
                 self.__check_limit ()
         
         elif isinstance (application, type (None)):
