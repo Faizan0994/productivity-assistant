@@ -44,7 +44,8 @@ def set_database (databasePath, settingsPath):
                          CREATE UNIQUE INDEX program_name 
                          ON programs (name); 
                          
-                         COMMIT;""")
+                         COMMIT;
+                         """)
     
     set_default_settings (file_path = settingsPath, settings = default_settings)
     settingPath = settingsPath
