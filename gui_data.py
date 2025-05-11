@@ -6,6 +6,7 @@ from backend_modules.database import (most_used_app,
                                       all_programs,
                                       add_daily_limit,
                                       all_daily_limits,
+                                      delete_daily_limit,
                                       NoRecordFound)
 from backend_modules.calc_time import (current_time, 
                                        to_utc, 
