@@ -60,12 +60,12 @@ class program:
 
             # gets limit of the program
             try:
-                self.limit = get_limit (self.process_id)
+                self.limit = timedelta (minutes = get_limit (self.process_id) [0][1])
             except NoRecordFound:
                 self.limit = None
             
             if not isinstance (self.limit, type (None)):
-                self.limit = timedelta (minutes = self.limit [0][1])
+                print (self.limit, self.timeSpentToday)
                 self.__check_limit ()
         
         elif isinstance (application, type (None)):
@@ -91,7 +91,7 @@ class program:
 
     def __check_limit (self) -> None:
         # checks the daily limit and kills the process
-        if self.limit >= self.timeSpentToday:
+        if self.limit <= self.timeSpentToday:
             self.__kill_process ()
 
 def foreground_process ():
