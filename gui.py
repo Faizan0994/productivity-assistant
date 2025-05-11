@@ -5,7 +5,8 @@ from PyQt5.QtGui import QGuiApplication, QFontDatabase, QFont, QPen, QColor, QIc
 from PyQt5.QtSvg import QSvgWidget
 from PyQt5.QtCore import Qt, QSize
 from gui_library import SmartScrollArea, FixedAxis, CustomGridViewBox, LineDrawer, addLimitDialogBox, lightColors, darkColors
-from gui_data import *
+import importlib
+import gui_data
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -189,23 +190,23 @@ class MainWindow(QMainWindow):
 
         # Cards
         self.todayText = QLabel("Today", self.todayCard)
-        self.todayUsage = QLabel(screenTimeToday, self.todayCard)
-        self.lastDayRef = QLabel(lastDayComparisonString, self.todayCard)
+        self.todayUsage = QLabel(gui_data.screenTimeToday, self.todayCard)
+        self.lastDayRef = QLabel(gui_data.lastDayComparisonString, self.todayCard)
         todayLayout.addWidget(self.todayText)
         todayLayout.addWidget(self.todayUsage)
         todayLayout.addWidget(self.lastDayRef)
         self.todayCard.setLayout(todayLayout)
 
         self.thisWeekText = QLabel("This week", self.thisWeekCard)
-        self.thisWeekUsage = QLabel(screenTimeThisWeek, self.thisWeekCard)
-        self.lastWeekRef = QLabel(lastWeekComparisonString, self.thisWeekCard)
+        self.thisWeekUsage = QLabel(gui_data.screenTimeThisWeek, self.thisWeekCard)
+        self.lastWeekRef = QLabel(gui_data.lastWeekComparisonString, self.thisWeekCard)
         thisWeekLayout.addWidget(self.thisWeekText)
         thisWeekLayout.addWidget(self.thisWeekUsage)
         thisWeekLayout.addWidget(self.lastWeekRef)
         self.thisWeekCard.setLayout(thisWeekLayout)
 
         self.mostUsedText = QLabel("Most Used App", self.mostUsedAppCard)
-        self.mostUsedAppName = QLabel(mostUsedApp, self.mostUsedAppCard)
+        self.mostUsedAppName = QLabel(gui_data.mostUsedApp, self.mostUsedAppCard)
         mostUsedAppLayout.addWidget(self.mostUsedText, 1)
         mostUsedAppLayout.addWidget(self.mostUsedAppName, 2)
         mostUsedAppLayout.setSpacing(1*self.vw)
@@ -229,8 +230,8 @@ class MainWindow(QMainWindow):
         self.graphSection.setObjectName("graphSection")
         myPen = pg.mkPen(color = self.primaryColor, width = int(0.25*self.vw))
         gridPen = QPen(QColor(self.mutedColor))
-        days = xPoints
-        usageTime = yPoints
+        days = gui_data.xPoints
+        usageTime = gui_data.yPoints
         padding = 0.1 # padding both sides of x-axis so that Labels are not cut off
         x_min = days[0] - padding
         x_max = days[-1] + padding
@@ -260,7 +261,7 @@ class MainWindow(QMainWindow):
         self.appInfoHeader.setLayout(appInfoHeadingLayout)
         self.appInfoLayout.addWidget(self.appInfoHeader)
         self.appInfoLayout.setSpacing(1*self.vw)
-        self.displayAppUsageInfo(appUsageList)
+        self.displayAppUsageInfo(gui_data.appUsageList)
         self.appInfoSection.setLayout(self.appInfoLayout)
 
         # Fixed size for cards and graph section
@@ -413,7 +414,7 @@ class MainWindow(QMainWindow):
         self.limitedAppsLayout.addWidget(self.limitedAppsTitle)
         self.limitedAppsLayout.addWidget(self.limitedAppsLine)
         self.limitedAppsLayout.setContentsMargins(0,0,0,0)
-        self.displayLimits(limitsData) # Display the app limits info
+        self.displayLimits(gui_data.limitsData) # Display the app limits info
 
         # Button for adding new limits
         self.limitsButtonContainer = QWidget(self.limitsSection)
@@ -534,14 +535,27 @@ class MainWindow(QMainWindow):
 
     def addLimitHandler(self):
         global addLimitDialog
-        addLimitDialog = addLimitDialogBox(daily_limit, sizeUnits=self.vw, theme="light")
+        addLimitDialog = addLimitDialogBox(gui_data.daily_limit, sizeUnits=self.vw, theme="light")
         addLimitDialog.setWindowFlag(Qt.WindowStaysOnTopHint, True)
         addLimitDialog.show()
         addLimitDialog.raise_() # Bring to front
         addLimitDialog.activateWindow() # keyboard focus
+        addLimitDialog.closeSignal.connect(self.refreshCurrentTab)
+
 
     def deleteLimit(self, title):
-        delete_daily_limit(title)
+        gui_data.delete_daily_limit(title)
+        self.refreshCurrentTab()
+
+
+    def refreshCurrentTab(self):
+        importlib.reload(gui_data)
+        if self.activeTabButton == self.dashboardButton:
+            self.renderDashboard()
+        elif self.activeTabButton == self.limitsTabButton:
+            self.renderLimitsTab()
+        elif self.activeTabButton == self.settingsButton:
+            self.renderSettingsTab()
 
 
 def main():
