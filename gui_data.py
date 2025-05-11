@@ -5,6 +5,7 @@ from backend_modules.database import (most_used_app,
                                       app_usage,
                                       all_programs,
                                       add_daily_limit,
+                                      all_daily_limits,
                                       NoRecordFound)
 from backend_modules.calc_time import (current_time, 
                                        to_utc, 
@@ -36,6 +37,15 @@ def convert_weekdays(weekdays) -> list:
 def daily_limit(appName, limit):
     appId = appIds[appNames.index(appName)] # Get corresponding appId
     add_daily_limit(appId, limit)
+
+
+def limitsInfo():
+    limits = all_daily_limits()
+    limitedAppNames = [item[1] for item in limits]
+    limitedAppLimits = [item[2] for item in limits]
+    limitedAppLimits = [f"{item // 60}h {item % 60}m" for item in limitedAppLimits]
+    limitedAppUsage = [item[1] for target in limitedAppNames for item in appUsageList if item[0] == target] # Don't worry, it works :)
+    return list(zip(limitedAppNames, limitedAppUsage, limitedAppLimits))
 
 
 midnight = datetime.combine(datetime.today(), datetime.min.time()).isoformat()
@@ -102,3 +112,5 @@ appUsageList = list(zip(appList, usageStrings))
 apps = all_programs()
 appIds = [app[0] for app in apps]
 appNames = [app[1] for app in apps]
+
+limitsData = limitsInfo()
