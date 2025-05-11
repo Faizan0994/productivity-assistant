@@ -413,7 +413,7 @@ class MainWindow(QMainWindow):
         self.limitedAppsLayout.addWidget(self.limitedAppsTitle)
         self.limitedAppsLayout.addWidget(self.limitedAppsLine)
         self.limitedAppsLayout.setContentsMargins(0,0,0,0)
-        self.displayLimits([("Code", "4h 3m 13s", "9h 30m")]) # Display the app limits info
+        self.displayLimits(limitsData) # Display the app limits info
 
         # Button for adding new limits
         self.limitsButtonContainer = QWidget(self.limitsSection)
