@@ -22,7 +22,8 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Productivity Assistant")
         self.setFixedSize(self.windowWidth, self.windowHeight)
         self.move(centeringVertex[0], centeringVertex[1]) # the center of screen
-        self.setTheme("light")
+        self.currentTheme = "light"
+        self.setTheme(self.currentTheme)
         self.initUI()
 
 
@@ -423,6 +424,7 @@ class MainWindow(QMainWindow):
         self.limitsPlusButton.setFixedSize(int(8.5*self.vw), int(2.5*self.vw))
         limitsButtonLayout.addWidget(self.limitsPlusButton, alignment= Qt.AlignVCenter | Qt.AlignRight)
         self.limitsPlusButton.setCursor(Qt.PointingHandCursor)
+        self.limitsPlusButton.clicked.connect(self.addLimitHandler)
         self.limitsButtonContainer.setLayout(limitsButtonLayout)
         self.limitedAppsLayout.addWidget(self.limitsButtonContainer)
         self.limitsSection.setLayout(self.limitedAppsLayout)
@@ -528,6 +530,14 @@ class MainWindow(QMainWindow):
             temp.setLayout(self.contentArea.layout())
             temp.setParent(None)
             temp.deleteLater()
+
+    def addLimitHandler(self):
+        global addLimitDialog
+        addLimitDialog = addLimitDialogBox(daily_limit, sizeUnits=self.vw, theme="light")
+        addLimitDialog.setWindowFlag(Qt.WindowStaysOnTopHint, True)
+        addLimitDialog.show()
+        addLimitDialog.raise_() # Bring to front
+        addLimitDialog.activateWindow() # keyboard focus
 
 
 def main():
