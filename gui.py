@@ -5,8 +5,10 @@ from PyQt5.QtGui import QGuiApplication, QFontDatabase, QFont, QPen, QColor, QIc
 from PyQt5.QtSvg import QSvgWidget
 from PyQt5.QtCore import Qt, QSize
 from gui_library import SmartScrollArea, FixedAxis, CustomGridViewBox, LineDrawer, addLimitDialogBox, lightColors, darkColors
+from backend_modules.settings import get_settings, update_settings
 import importlib
 import gui_data
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -23,7 +25,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Productivity Assistant")
         self.setFixedSize(self.windowWidth, self.windowHeight)
         self.move(centeringVertex[0], centeringVertex[1]) # the center of screen
-        self.currentTheme = "light"
+        self.currentTheme = get_settings("theme") # Get the current theme from settings
         self.setTheme(self.currentTheme)
         self.initUI()
 
@@ -47,8 +49,12 @@ class MainWindow(QMainWindow):
     def changeTheme(self, theme):
         if theme == "light":
             self.setTheme("light")
+            update_settings("theme", "light")
+            self.currentTheme = "light"
         elif theme == "dark":
             self.setTheme("dark")
+            update_settings("theme", "dark")
+            self.currentTheme = "dark"
         self.initUI()
         self.refreshCurrentTab()
 
@@ -471,6 +477,56 @@ class MainWindow(QMainWindow):
         self.settingsButton.setStyleSheet(self.activeTabButtonStyle)
         self.title.setText("Settings")
         self.clearContentArea()
+
+        settingsTabLayout = QVBoxLayout()
+        themeSettingsContainer = QWidget(self.contentArea)
+        themeButtonsContainer = QWidget(themeSettingsContainer)
+        themeSettingsLayout = QHBoxLayout()
+        themeButtonsLayout = QHBoxLayout()
+
+        themeSettingsTitle = QLabel("Theme", themeSettingsContainer)
+        themeSettingsTitle.setAlignment(Qt.AlignTop)
+
+        lightModeButton = QPushButton("Light", themeButtonsContainer)
+        lightModeButton.setCursor(Qt.PointingHandCursor)
+        lightModeButton.setFixedSize(8*self.vw, 3*self.vw)
+        lightModeButton.clicked.connect(lambda: self.changeTheme("light"))
+        darkModeButton = QPushButton("Dark", themeButtonsContainer)
+        darkModeButton.setCursor(Qt.PointingHandCursor)
+        darkModeButton.setFixedSize(8*self.vw, 3*self.vw)
+        darkModeButton.clicked.connect(lambda: self.changeTheme("dark"))
+
+        themeSettingsTitle.setStyleSheet(f"""
+        color: {self.textColor};
+        font-size: {3*self.vw}px;
+        """)
+        themeButtonsContainer.setStyleSheet(f"""
+        QPushButton {{
+            color: {self.textColor};
+            border: 2px solid {self.cardOutlineColor};
+            border-radius: 5px;
+            font-size: {int(1.8*self.vw)}px;
+        }}
+        """)
+        activeButtonStyle = f"""
+        background-color: {self.primaryColor};
+        border: none;
+        color: {self.cardBgColor};
+        """
+        if self.currentTheme == "light":
+            lightModeButton.setStyleSheet(activeButtonStyle)
+        elif self.currentTheme == "dark":
+            darkModeButton.setStyleSheet(activeButtonStyle)
+
+        themeButtonsLayout.addWidget(lightModeButton)
+        themeButtonsLayout.addWidget(darkModeButton)
+        themeButtonsLayout.setSpacing(int(1.5*self.vw))
+        themeButtonsContainer.setLayout(themeButtonsLayout)
+        themeSettingsLayout.addWidget(themeSettingsTitle)
+        themeSettingsLayout.addWidget(themeButtonsContainer, alignment=Qt.AlignRight)
+        themeSettingsContainer.setLayout(themeSettingsLayout)
+        settingsTabLayout.addWidget(themeSettingsContainer)
+        self.contentArea.setLayout(settingsTabLayout)
     
 
     def displayLimits(self, limitedAppUsageToday = []): # Display the app limits info
