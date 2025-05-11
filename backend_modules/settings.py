@@ -3,7 +3,7 @@ from datetime   import time
 from .link      import settingsPath
 
 default_settings = {
-            "theme": "dark",
+            "theme": "light",
             "notifications": True,
             "reminders": True,
             "daily_report": True,
