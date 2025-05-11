@@ -478,6 +478,7 @@ class MainWindow(QMainWindow):
             deletelimitButton.setIcon(QIcon("./assets/delete-icon.svg"))
             deletelimitButton.setIconSize(QSize(int(2*self.vw), int(2*self.vw)))
             deletelimitButton.setCursor(Qt.PointingHandCursor)
+            deletelimitButton.clicked.connect(lambda: self.deleteLimit(appTitle.text()))
             containerLayout.addWidget(deletelimitButton, alignment= Qt.AlignVCenter | Qt.AlignRight)
             buttonContainer.setLayout(containerLayout)
             appInfoLayout.addWidget(appIcon)
@@ -538,6 +539,9 @@ class MainWindow(QMainWindow):
         addLimitDialog.show()
         addLimitDialog.raise_() # Bring to front
         addLimitDialog.activateWindow() # keyboard focus
+
+    def deleteLimit(self, title):
+        delete_daily_limit(title)
 
 
 def main():
