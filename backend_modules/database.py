@@ -64,7 +64,7 @@ if freshDownload:
 
 del (freshDownload)
 
-database = sqlite3.connect (databasePath)
+database = sqlite3.connect (databasePath, check_same_thread = False)
 cursordb = database.cursor ()
 
 def add_program (name: str):

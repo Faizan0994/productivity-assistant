@@ -6,9 +6,9 @@ from time       import sleep
 # important control flags
 asstiantRunning = True
 
-app = program (None)
+# app = program (None)
 
-def assistant (prevApp: program):
+def assistant (prevApp:program = program (None)) -> None:
     while asstiantRunning:
         currApp = program (foreground_process ())
 
@@ -27,6 +27,3 @@ def assistant (prevApp: program):
                 update_endtime (index, prevApp.endTime)
         
         sleep (1)
-
-# main function execution 
-assistant (app)

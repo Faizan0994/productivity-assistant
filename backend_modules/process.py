@@ -65,7 +65,6 @@ class program:
                 self.limit = None
             
             if not isinstance (self.limit, type (None)):
-                print (self.limit, self.timeSpentToday)
                 self.__check_limit ()
         
         elif isinstance (application, type (None)):

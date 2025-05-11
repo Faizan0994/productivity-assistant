@@ -644,4 +644,5 @@ def main():
     window.show()
     app.exec_() # starts the event loop
 
-main()
+
+# main()
