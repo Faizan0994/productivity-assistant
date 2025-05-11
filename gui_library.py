@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QScrollArea, QWidget, QDialog, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QComboBox, QTimeEdit
-from PyQt5.QtCore import QTimer, Qt, QTime
+from PyQt5.QtCore import QTimer, Qt, QTime, pyqtSignal
 from PyQt5.QtGui import QPen, QColor, QPainter
 from gui_data import appNames
 import pyqtgraph as pg
@@ -88,6 +88,7 @@ class LineDrawer(QWidget):
 
 
 class addLimitDialogBox(QWidget):
+    closeSignal = pyqtSignal(int)
     def __init__(self, limitButtonAction, title="Add Limit", sizeUnits=1, theme="light"):
         super().__init__()
         self.setWindowTitle(title)
@@ -197,3 +198,4 @@ class addLimitDialogBox(QWidget):
         timeLimit = self.timeSelect.time().hour() * 60 + self.timeSelect.time().minute() # Time in minutes
         self.limitButtonAction(appName, timeLimit)
         self.close()
+        self.closeSignal.emit(1)
