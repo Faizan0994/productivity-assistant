@@ -44,6 +44,15 @@ class MainWindow(QMainWindow):
         self.scrollBarColor = colors["scrollBarColor"]
 
 
+    def changeTheme(self, theme):
+        if theme == "light":
+            self.setTheme("light")
+        elif theme == "dark":
+            self.setTheme("dark")
+        self.initUI()
+        self.refreshCurrentTab()
+
+
     def initUI(self): # Builds the basic structure
         centralWidget = QWidget() # The window must have a central widget
         centralWidget.setStyleSheet(f"""
@@ -281,6 +290,7 @@ class MainWindow(QMainWindow):
                 QLabel {{
                     background: none;
                     border: none;
+                    color: {self.textColor};
                 }}
             """)
         self.todayText.setStyleSheet(f"""
@@ -331,6 +341,7 @@ class MainWindow(QMainWindow):
         self.appInfoTitle.setStyleSheet(f"""
                                         font-size: {int(1.4*self.vw)}px;
                                         font-weight: 400;
+                                        color: {self.textColor};
                                         """)
 
         dashboardLayout.addWidget(self.cardsSection)
@@ -355,9 +366,11 @@ class MainWindow(QMainWindow):
             appTitle.setAlignment(Qt.AlignVCenter)
             appTime = QLabel(info[1], card)
             appTime.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
-            appIcon = QSvgWidget("./assets/app-icon.svg", appInfo)
+            if self.currentTheme == 'dark':
+                appIcon = QSvgWidget("./assets/app-icon-white.svg", appInfo)
+            else:
+                appIcon = QSvgWidget("./assets/app-icon.svg", appInfo)
             appIcon.setFixedSize(int(3*self.vw), int(3*self.vw))
-            appIcon.setStyleSheet("color: black;")
             appInfoLayout.addWidget(appIcon)
             appInfoLayout.addWidget(appTitle)
             appInfoLayout.setContentsMargins(0,0,0,0)
@@ -372,6 +385,7 @@ class MainWindow(QMainWindow):
             card.setStyleSheet(f"""
                                 border: 1px solid {self.cardOutlineColor};
                                 background-color: {self.cardBgColor};
+                                color: {self.textColor};
                                 border-radius: 8px;
                             """)
             appInfo.setStyleSheet(f"""
@@ -433,6 +447,7 @@ class MainWindow(QMainWindow):
         self.limitedAppsTitle.setStyleSheet(f"""
                                         font-size: {int(1.4*self.vw)}px;
                                         font-weight: 400;
+                                        color: {self.textColor};
                                         """)
         self.limitsPlusButton.setStyleSheet(f"""
                                         color: {self.cardBgColor};
@@ -468,7 +483,10 @@ class MainWindow(QMainWindow):
             appTitle.setAlignment(Qt.AlignVCenter)
             appTime = QLabel(info[1] + " / " + info[2], card)
             appTime.setAlignment(Qt.AlignCenter)
-            appIcon = QSvgWidget("./assets/app-icon.svg", appInfo)
+            if self.currentTheme == 'dark':
+                appIcon = QSvgWidget("./assets/app-icon-white.svg", appInfo)
+            else:
+                appIcon = QSvgWidget("./assets/app-icon.svg", appInfo)
             appIcon.setFixedSize(int(3*self.vw), int(3*self.vw))
             appIcon.setStyleSheet(f"color: {self.textColor};")
             buttonContainer = QWidget(card)
@@ -476,7 +494,10 @@ class MainWindow(QMainWindow):
             containerLayout = QHBoxLayout()
             containerLayout.setContentsMargins(0,0,0,0)
             deletelimitButton = QPushButton(buttonContainer)
-            deletelimitButton.setIcon(QIcon("./assets/delete-icon.svg"))
+            if self.currentTheme == "dark":
+                deletelimitButton.setIcon(QIcon("./assets/delete-icon-white.svg"))
+            else:
+                deletelimitButton.setIcon(QIcon("./assets/delete-icon.svg"))
             deletelimitButton.setIconSize(QSize(int(2*self.vw), int(2*self.vw)))
             deletelimitButton.setCursor(Qt.PointingHandCursor)
             deletelimitButton.clicked.connect(lambda: self.deleteLimit(appTitle.text()))
@@ -498,6 +519,7 @@ class MainWindow(QMainWindow):
                                 border: 1px solid {self.cardOutlineColor};
                                 background-color: {self.cardBgColor};
                                 border-radius: 8px;
+                                color: {self.textColor};
                             """)
             appInfo.setStyleSheet(f"""
                                 border: none;
@@ -535,7 +557,7 @@ class MainWindow(QMainWindow):
 
     def addLimitHandler(self):
         global addLimitDialog
-        addLimitDialog = addLimitDialogBox(gui_data.daily_limit, sizeUnits=self.vw, theme="light")
+        addLimitDialog = addLimitDialogBox(gui_data.daily_limit, sizeUnits=self.vw, theme=self.currentTheme)
         addLimitDialog.setWindowFlag(Qt.WindowStaysOnTopHint, True)
         addLimitDialog.show()
         addLimitDialog.raise_() # Bring to front
