@@ -255,7 +255,7 @@ class MainWindow(QMainWindow):
         self.graph.setXRange(x_min, x_max)
         self.graph.setTitle("Screen Time", color = self.textColor, size = f"{int(1.5*self.vw)}pt")
         self.graph.showGrid(x = False, y = True)
-        self.graph.setMouseEnabled(x=False, y=False)
+        self.graph.setAttribute(Qt.WA_TransparentForMouseEvents, True)
         self.graph.plot(days, usageTime, pen = myPen, symbol = "o", symbolBrush = self.accentColor)
         xAxis = self.graph.getAxis('bottom')
         yAxis = self.graph.getAxis('left')
