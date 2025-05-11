@@ -171,6 +171,7 @@ class MainWindow(QMainWindow):
         self.resetTabButtonStyles()  # Reset the previous button's style
         self.activeTabButton = self.dashboardButton  # Update the active button
         self.dashboardButton.setStyleSheet(self.activeTabButtonStyle)
+        self.title.setText("Dashboard")
         self.clearContentArea()
 
         dashboardLayout = QVBoxLayout()
@@ -468,6 +469,7 @@ class MainWindow(QMainWindow):
         self.resetTabButtonStyles()
         self.activeTabButton = self.settingsButton
         self.settingsButton.setStyleSheet(self.activeTabButtonStyle)
+        self.title.setText("Settings")
         self.clearContentArea()
     
 
