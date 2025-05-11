@@ -22,7 +22,7 @@ def save_settings (settings, file_path = settingsPath) -> None:
 def update_settings (key: str, value, file_path = settingsPath) -> None:
     settings = load_settings (file_path)
     settings[key] = value
-    save_settings (file_path, settings)
+    save_settings (settings, file_path)
 
 def get_settings (key: str, file_path = settingsPath) -> any:
     settings = load_settings (file_path)
