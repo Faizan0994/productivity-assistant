@@ -2,7 +2,9 @@ from datetime import datetime, timedelta
 from backend_modules.database import (most_used_app, 
                                       time_spent, 
                                       cordinates, 
-                                      app_usage, 
+                                      app_usage,
+                                      all_programs,
+                                      add_daily_limit,
                                       NoRecordFound)
 from backend_modules.calc_time import (current_time, 
                                        to_utc, 
@@ -29,6 +31,12 @@ def convert_weekdays(weekdays) -> list:
             factor += 7
         newWeekDays.append(val + factor)
     return newWeekDays
+
+
+def daily_limit(appName, limit):
+    appId = appIds[appNames.index(appName)] # Get corresponding appId
+    add_daily_limit(appId, limit)
+
 
 midnight = datetime.combine(datetime.today(), datetime.min.time()).isoformat()
 lastMidnight = datetime.combine(datetime.today() - timedelta(days=1), datetime.min.time()).isoformat()
@@ -89,3 +97,8 @@ usageList = [int(data[1].total_seconds()) for data in appUsageList]
 usageData = [convert_seconds(data) for data in usageList]
 usageStrings = [f"{data[0]}h {data[1]}m {data[2]}s" for data in usageData]
 appUsageList = list(zip(appList, usageStrings))
+
+# All the apps in record
+apps = all_programs()
+appIds = [app[0] for app in apps]
+appNames = [app[1] for app in apps]
