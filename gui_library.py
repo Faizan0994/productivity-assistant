@@ -1,6 +1,7 @@
-from PyQt5.QtWidgets import QScrollArea, QWidget
-from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtWidgets import QScrollArea, QWidget, QDialog, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QComboBox, QTimeEdit
+from PyQt5.QtCore import QTimer, Qt, QTime
 from PyQt5.QtGui import QPen, QColor, QPainter
+from gui_data import appNames
 import pyqtgraph as pg
 
 lightColors = {
@@ -84,3 +85,115 @@ class LineDrawer(QWidget):
         
         if self.direction == "vertical":
             painter.drawLine(self.width() // 2, 0, self.width() // 2, self.height())
+
+
+class addLimitDialogBox(QWidget):
+    def __init__(self, limitButtonAction, title="Add Limit", sizeUnits=1, theme="light"):
+        super().__init__()
+        self.setWindowTitle(title)
+        self.setFixedSize(35*sizeUnits, 25*sizeUnits)
+        centeringheight = (self.screen().availableGeometry().height() - self.height()) // 2
+        centeringwidth = (self.screen().availableGeometry().width() - self.width()) // 2
+        self.move(centeringwidth, centeringheight)
+        self.limitButtonAction = limitButtonAction
+
+        if theme == "light":
+            self.colors = lightColors
+        else:
+            self.colors = darkColors
+
+        dialogLayout = QVBoxLayout()
+        buttonsLayout = QHBoxLayout()
+        self.dialogText = QLabel("Select an app")
+
+        self.combo = QComboBox()
+        self.combo.addItems(appNames)
+
+        self.timeText = QLabel("Select a time limit")
+
+        self.timeSelect = QTimeEdit()
+        self.timeSelect.setDisplayFormat("hh:mm")
+        self.timeSelect.setTime(QTime(0, 60))
+
+        buttonsContainer = QWidget()
+        setLimitButton = QPushButton("Set Limit")
+        setLimitButton.setCursor(Qt.PointingHandCursor)
+        setLimitButton.setFixedSize(12*sizeUnits, 3*sizeUnits)
+        setLimitButton.clicked.connect(self.applyLimit)
+        cancelButton = QPushButton("Cancel")
+        cancelButton.setCursor(Qt.PointingHandCursor)
+        cancelButton.clicked.connect(self.close)
+        cancelButton.setFixedSize(12*sizeUnits, 3*sizeUnits)
+
+
+        dialogLayout.addWidget(self.dialogText)
+        dialogLayout.addWidget(self.combo)
+        dialogLayout.addWidget(self.timeText)
+        dialogLayout.addWidget(self.timeSelect)
+        buttonsLayout.addWidget(setLimitButton)
+        buttonsLayout.addWidget(cancelButton)
+        buttonsContainer.setLayout(buttonsLayout)
+        dialogLayout.addWidget(buttonsContainer)
+        dialogLayout.setSpacing(1*sizeUnits)
+        self.setLayout(dialogLayout)
+
+
+        self.setStyleSheet(f"""
+            background-color: {self.colors['bgColor']};
+            color: {self.colors['textColor']};
+            font-size: {2*sizeUnits}px;
+            font-family: 'Inter', sans-serif;
+        """)
+        self.dialogText.setStyleSheet(f"""
+            color: {self.colors['textColor']};
+            font-size: {1.5*sizeUnits}px;
+            margin: 0px;
+            padding: 0px;
+        """)
+        self.timeText.setStyleSheet(f"""
+            color: {self.colors['textColor']};
+            font-size: {int(1.5*sizeUnits)}px;
+            margin: 0px;
+            padding: 0px;
+        """)
+        self.timeSelect.setStyleSheet(f"""
+            QTimeEdit {{
+                color: {self.colors['textColor']};
+                font-size: {int(1.5*sizeUnits)}px;
+                background-color: {self.colors['cardBgColor']};
+                border: 1px solid {self.colors['cardOutlineColor']};
+                border-radius: 5px;
+            }}
+            QTimeEdit::up-button, QTimeEdit::down-button {{
+                width: 0px;
+                height: 0px;
+                border: none;
+            }}
+        """)
+        self.combo.setStyleSheet(f"""
+            QComboBox {{
+                color: {self.colors['textColor']};
+                font-size: {int(1.5*sizeUnits)}px;
+                background-color: {self.colors['cardBgColor']};
+                border: 1px solid {self.colors['cardOutlineColor']};
+                border-radius: 5px;
+            }}
+        """)
+        setLimitButton.setStyleSheet(f"""
+            background-color: {self.colors['primaryColor']};
+            color: {self.colors['bgColor']};
+            border: none;
+            border-radius: 8px;
+        """)
+        cancelButton.setStyleSheet(f"""
+            background-color: transparent;
+            color: {self.colors['textColor']};
+            border: 1px solid {self.colors['cardOutlineColor']};
+            border-radius: 8px;
+        """)
+
+    def applyLimit(self):
+        appName = self.combo.currentText()
+        timeLimit = self.timeSelect.time().hour() * 60 + self.timeSelect.time().minute() # Time in minutes
+        self.limitButtonAction(appName, timeLimit)
+        self.close()
