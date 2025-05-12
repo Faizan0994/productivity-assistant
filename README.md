@@ -30,6 +30,5 @@ A productivity app that tracks app usage and allows you to set limits
 - tzlocal
 - PyInstaller
 
-
 Run the following command to compile:
 python -m PyInstaller --noconsole -n "Productivity Assistant" --clean --add-data "assets;assets" --noconfirm background.py
