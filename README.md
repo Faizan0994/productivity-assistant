@@ -28,3 +28,4 @@ A productivity app that tracks app usage and allows you to set limits
 - pytz
 - pywin32
 - tzlocal
+- PyInstaller
