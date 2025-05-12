@@ -1,4 +1,5 @@
 import sys
+import os
 import pyqtgraph as pg
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QLabel, QPushButton, QSizePolicy, QScrollArea
 from PyQt5.QtGui import QGuiApplication, QFontDatabase, QFont, QPen, QColor, QIcon
@@ -66,10 +67,6 @@ class MainWindow(QMainWindow):
                                     font-family: inter
                                     """)
 
-        fontId = QFontDatabase.addApplicationFont("./assets/inter.ttf")
-        interFontFamily = QFontDatabase.applicationFontFamilies(fontId)[0] # first element is the font we want to use
-        interFont = QFont(interFontFamily, 1)
-        centralWidget.setFont(interFont)
 
         self.header = QWidget(centralWidget)
         self.title = QLabel("Dashboard", self.header)
@@ -374,9 +371,9 @@ class MainWindow(QMainWindow):
             appTime = QLabel(info[1], card)
             appTime.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
             if self.currentTheme == 'dark':
-                appIcon = QSvgWidget("./assets/app-icon-white.svg", appInfo)
+                appIcon = QSvgWidget(resource_path("assets/app-icon-white.svg"), appInfo)
             else:
-                appIcon = QSvgWidget("./assets/app-icon.svg", appInfo)
+                appIcon = QSvgWidget(resource_path("assets/app-icon.svg"), appInfo)
             appIcon.setFixedSize(int(3*self.vw), int(3*self.vw))
             appInfoLayout.addWidget(appIcon)
             appInfoLayout.addWidget(appTitle)
@@ -542,9 +539,9 @@ class MainWindow(QMainWindow):
             appTime = QLabel(info[1] + " / " + info[2], card)
             appTime.setAlignment(Qt.AlignCenter)
             if self.currentTheme == 'dark':
-                appIcon = QSvgWidget("./assets/app-icon-white.svg", appInfo)
+                appIcon = QSvgWidget(resource_path("assets/app-icon-white.svg"), appInfo)
             else:
-                appIcon = QSvgWidget("./assets/app-icon.svg", appInfo)
+                appIcon = QSvgWidget(resource_path("assets/app-icon.svg"), appInfo)
             appIcon.setFixedSize(int(3*self.vw), int(3*self.vw))
             appIcon.setStyleSheet(f"color: {self.textColor};")
             buttonContainer = QWidget(card)
@@ -553,9 +550,9 @@ class MainWindow(QMainWindow):
             containerLayout.setContentsMargins(0,0,0,0)
             deletelimitButton = QPushButton(buttonContainer)
             if self.currentTheme == "dark":
-                deletelimitButton.setIcon(QIcon("./assets/delete-icon-white.svg"))
+                deletelimitButton.setIcon(QIcon(resource_path("assets/delete-icon-white.svg")))
             else:
-                deletelimitButton.setIcon(QIcon("./assets/delete-icon.svg"))
+                deletelimitButton.setIcon(QIcon(resource_path("assets/delete-icon.svg")))
             deletelimitButton.setIconSize(QSize(int(2*self.vw), int(2*self.vw)))
             deletelimitButton.setCursor(Qt.PointingHandCursor)
             deletelimitButton.clicked.connect(lambda: self.deleteLimit(appTitle.text()))
@@ -636,6 +633,12 @@ class MainWindow(QMainWindow):
             self.renderLimitsTab()
         elif self.activeTabButton == self.settingsButton:
             self.renderSettingsTab()
+
+
+def resource_path(relative_path):
+    """Get absolute path to resource, works for dev and PyInstaller"""
+    base_path = getattr(sys, '_MEIPASS', os.path.abspath("."))
+    return os.path.join(base_path, relative_path)
 
 
 def main():
