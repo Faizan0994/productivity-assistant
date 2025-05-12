@@ -131,10 +131,11 @@ def all_programs () -> list[tuple]:
     programs = [programs for programs in cursordb.execute ("""
                                                            SELECT * FROM programs
                                                            """)]
-    if not programs == []:
+    """if not programs == []:
         return programs
     else:
-        raise NoRecordFound ("No programs found")
+        raise NoRecordFound ("No programs found")"""
+    return programs
 
 def cordinates (timerange: list, name: str = "") -> list:
     """
