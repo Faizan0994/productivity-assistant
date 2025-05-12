@@ -30,16 +30,16 @@ def is_first_run (flag_file = "first_run.flag"):
 
 def mark_first_run_done (flag_file = "first_run.flag"):
     try:
-        with open(flag_file, "w") as f:
+        with open (flag_file, "w") as f:
             f.write ("done")
     except:
         pass
 
-if is_first_run():
+if is_first_run ():
     add_to_startup ("productivity_assistant")
     mark_first_run_done ()
 
-def is_silent_mode():
+def is_silent_mode ():
     return "--silent" in sys.argv
 
 for process in process_iter (['name']):
